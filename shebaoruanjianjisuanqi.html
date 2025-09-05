@@ -1,0 +1,124 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		  <meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- 新 Bootstrap5 核心 CSS 文件 -->
+		<link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+		
+		<!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
+		<script src="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script>
+		function calc(){
+			sal=document.getElementById("salary").value;
+			salnum=parseInt(sal);
+			ylgr=salnum*0.08;
+			ylgs=salnum*0.2;
+			document.getElementById("ylgr").innerText=ylgr;
+			document.getElementById("ylgs").innerText=ylgs;
+			ybgr=salnum*0.02;
+			ybgs=salnum*0.06;
+			document.getElementById("ybgr").innerText=ybgr;
+			document.getElementById("ybgs").innerText=ybgs;
+            sygr=salnum*0.005;
+		    sygs=salnum*0.015;
+	        document.getElementById("sygr").innerText=sygr;
+			document.getElementById("sygs").innerText=sygs;
+			gsgs=salnum*0.005;
+			document.getElementById("gsgs").innerText=gsgs;
+			shygs=salnum*0.008;
+			document.getElementById("shygs").innerText=shygs;
+			ggr=salnum*0.12; ggs=salnum*0.12;
+			document.getElementById("ggr").innerText=ggr;
+			document.getElementById("ggs").innerText=ggs;
+			grTotal=ylgr+ybgr+sygr+ggr;
+			gsTotal=ylgs+ybgs+sygs+gsgs+shygs+ggs;
+			totalAll=grTotal+gsTotal; 
+			document.getElementById("grTotal").innerText=grTotal;
+			document.getElementById("gsTotal").innerText=gsTotal;
+			document.getElementById("totalAll").innerText=totalAll;
+			}	
+		</script>
+	</head>
+	<body>
+		<div class="container text-center">
+	<h2>个
+	人社保计算软件-中北大学-刘海坤</h2>
+	</div>
+			<table class="table table-bordered table-striped text-center table-hover">
+				<tr class="table-primary">
+				<td>工资</td>
+				<td colspan="3">
+					<input class="form-control" type="text"  id="salary" placeholder="请输入工资"/> 
+					<td>
+					<button onclick="calc()"class="btn btn-danger btn-block">计算</button>
+                </td> 			
+				</td>
+				</tr>
+				<tr>
+				<td>险种</td>
+				<td>个人％</td>
+			    <td>个人</td>
+				<td>公司%</td>
+				<td>公司</td>
+				</tr>
+				<tr>
+				<td>养老</td>
+					<td>8%</td>
+					<td id="ylgr"></td>
+					<td>20%</td>
+					<td id="ylgs"></td>
+					
+				</tr>
+				<tr>
+				<td>医保</td>
+					<td>2%</td>
+					<td id="ybgr"></td>
+					<td>6%</td>
+					<td id="ybgs"></td>
+				</tr>
+				<tr>
+				<td>失业</td>
+					<td>0.5%</td>
+					<td id="sygr"></td>
+					<td>1.5%</td>
+					<td id="sygs"></td>
+				</tr>
+				<tr>
+				<td>工伤</td>
+					<td></td>
+					<td></td>
+					<td>0.5%</td>
+					<td id="gsgs"></td>
+				</tr>
+				<tr>
+				<td>生育</td>
+					<td></td>
+					<td></td>
+					<td>0.8%</td>
+					<td id="shygs"></td>
+				</tr>
+				<tr>
+					<td>公积金</td>
+					<td>12%</td>
+					<td id="ggr"></td>
+					<td>12%</td>
+					<td id="ggs"></td>
+				</tr>
+				<tr>
+					<td>合计</td>
+					<td>个人合计</td>
+                     <td id="grTotal"></td>
+					 <td>公司合计</td>
+					 <td id="gsTotal"></td>
+				</tr>
+				<tr class="table-dark text-white"> 
+				    <td colspan="3">总合计（个人+公司）</td>  
+				    <td colspan="2" id="totalAll"></td>  
+				</tr>
+			</table>
+		
+	
+	</body>
+</html>
