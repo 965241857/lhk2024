@@ -1,90 +1,198 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8" />
-		  <meta name="viewport" content="width=device-width, initial-scale=1">
-		<!-- 新 Bootstrap5 核心 CSS 文件 -->
-		<link rel="stylesheet" href="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-		
-		<!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
-		<script src="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
-		<link rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<title></title>
+		<meta charset="utf-8">
+		<title>学生注册表单</title>
+		<style>
+			body{
+				font-family: Arial, sans-serif;
+				max-width: 500px;
+				margin: 50px auto;
+				padding: 0 20px;
+			}
+			.form-title{
+				text-align: center;
+				color: #333; 
+				font-size: 24px;
+				margin-bottom: 30px;
+			}
+			.form-group{
+				margin-bottom: 20px;
+			}
+			label{
+				display: block;
+				margin-bottom: 8px;
+				font-weight: bold;
+				color: #444;
+			}
+			.required{
+				color: red; 	}
+			input{
+				width: 100%; 
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 4px; 
+				box-sizing: border-box;
+				font-size: 16px; 
+			}
+			.error{
+				color: red; 
+								font-size: 14px;
+				margin-top: 5px;
+				min-height: 20px;
+			}
+			button{
+				width: 100%;
+				padding: 12px;
+				background-color: #007bff;
+				color: white; 
+				border: none;
+				border-radius: 4px; 
+				cursor: pointer;
+				font-size: 16px;
+			}
+			button:hover{
+				background-color: #0056b3; 
+			}
+		</style>		
 	</head>
 	<body>
-		<div class="container text-center">
-	<h2>个人社保计算软件-中北大学-刘海坤</h2>
-	</div>
-			<table class="table table-bordered table-striped text-center table-hover">
-				<tr class="table-primary">
-				<td>工资</td>
-				<td colspan="3">
-					<input class="form-control" type="text"  id="salary" placeholder="请输入工资"/> 
-					<td>
-					<button class="btn btn-danger btn-block">计算</button>
-                </td> 			
-				</td>
-				</tr>
-				<tr>
-				<td>险种</td>
-				<td>个人％</td>
-			    <td>个人</td>
-				<td>公司%</td>
-				<td>公司</td>
-				</tr>
-				<td>养老</td>
-					<td>8%</td>
-					<td></td>
-					<td>20%</td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-				<td>医保</td>
-					<td>2%</td>
-					<td></td>
-					<td>6%</td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-				<td>失业</td>
-					<td>0.5%</td>
-					<td></td>
-					<td>1.5%</td>
-					<td></td>
-				</tr>
-				<tr>
-				<td>工伤</td>
-					<td></td>
-					<td></td>
-					<td>0.5%</td>
-					<td></td>
-				</tr>
-				<tr>
-				<td>生育</td>
-					<td></td>
-					<td></td>
-					<td>0.8%</td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>公积金</td>
-					<td>12%</td>
-					<td></td>
-					<td>12%</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>合计</td>
-					<td>个人合计</td>
-                     <td></td>
-					 <td>公司合计</td>
-					 <td></td>
-				</tr>
-			</table>
-		
-	
+		<h3 class="form-title">学生注册表单</h3>
+		<form id="myForm">
+			<div class="form-group">
+				<label for="name">姓名<span class="required">*</span></label>
+				<input type="text" id="name" placeholder="请输入您的姓名">
+				<div class="error" id="nameError"></div>
+			</div>
+			<div class="form-group">
+				<label for="phone">手机号<span class="required">*</span></label>
+				<input type="text" id="phone" placeholder="请输入11位手机号">
+				<div class="error" id="phoneError"></div>
+			</div>
+			<div class="form-group">
+				<label for="email">邮箱</label>
+				<input type="text" id="email" placeholder="可选,如:student@school.com">
+				<div class="error" id="emailError"></div>
+			</div>
+			<div class="form-group">
+				<label for="password">密码<span class="required">*</span></label>
+				<input type="password" id="password" placeholder="至少6位,包含字母和数字">
+				<div class="error" id="passwordError"></div>
+			</div>
+			<div class="form-group">
+				<label for="confirmPassword">确认密码<span class="required">*</span></label>
+				<input type="password" id="confirmPassword" placeholder="请再次输入密码"/>
+				<div class="error" id="confirmPasswordError"></div>
+			</div>
+			<button type="submit">注册</button>
+		</form>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const form = document.getElementById('myForm');
+				const nameInput = document.getElementById('name');
+				const phoneInput = document.getElementById('phone');
+				const emailInput = document.getElementById('email');
+				const passwordInput = document.getElementById('password');
+				const confirmPasswordInput = document.getElementById('confirmPassword');
+				const nameError = document.getElementById('nameError');
+				const phoneError = document.getElementById('phoneError');
+				const emailError = document.getElementById('emailError');
+				const passwordError = document.getElementById('passwordError');
+				const confirmPasswordError = document.getElementById('confirmPasswordError');
+				
+				form.addEventListener('submit', function(e) {
+					e.preventDefault();
+					const isNameValid = validateName();
+					const isPhoneValid = validatePhone();
+					const isEmailValid = validateEmail();
+					const isPasswordValid = validatePassword();
+					const isConfirmPasswordValid = validateConfirmPassword();
+					
+					if (isNameValid && isPhoneValid && isEmailValid && isPasswordValid && isConfirmPasswordValid) {
+						alert('注册成功！');
+						form.reset();
+					}
+				});
+				
+				nameInput.addEventListener('blur', validateName);
+				phoneInput.addEventListener('blur', validatePhone);
+				emailInput.addEventListener('blur', validateEmail);
+				passwordInput.addEventListener('blur', validatePassword);
+				confirmPasswordInput.addEventListener('blur', validateConfirmPassword);
+				
+				function validateName() {
+					if (nameInput.value.trim() === '') {
+						nameError.textContent = '姓名不能为空';
+						return false;
+					} else {
+						nameError.textContent = '';
+						return true;
+					}
+				}
+				
+				function validatePhone() {
+					const phone = phoneInput.value.trim();
+					if (phone === '') {
+						phoneError.textContent = '手机号不能为空';
+						return false;
+					} else if (!/^1\d{10}$/.test(phone)) {
+						phoneError.textContent = "请输入有效的11位手机号";
+						return false;
+					} else {
+						phoneError.textContent = '';
+						return true;
+					}
+				}
+				
+				function validateEmail() {
+					const email = emailInput.value.trim();
+					// 邮箱为可选，为空时也视为有效
+					if (email === '') {
+						emailError.textContent = '';
+						return true;
+					}
+					// 简单的邮箱格式验证
+					if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+						emailError.textContent = "请输入有效的邮箱地址";
+						return false;
+					} else {
+						emailError.textContent = '';
+						return true;
+					}
+				}
+				
+				function validatePassword() {
+					const password = passwordInput.value;
+					if (password === '') {
+						passwordError.textContent = '密码不能为空';
+						return false;
+					} else if (password.length < 6) {
+						passwordError.textContent = '密码长度不能少于6位';
+						return false;
+					} else if (!/[a-zA-Z]/.test(password) || !/\d/.test(password)) {
+						passwordError.textContent = '密码需要同时包含字母和数字';
+						return false;
+					} else {
+						passwordError.textContent = '';
+						return true;
+					}
+				}
+				
+				function validateConfirmPassword() {
+					const password = passwordInput.value;
+					const confirmPassword = confirmPasswordInput.value;
+					if (confirmPassword === '') {
+						confirmPasswordError.textContent = '确认密码不能为空';
+						return false;
+					} else if (confirmPassword !== password) {
+						confirmPasswordError.textContent = '两次输入密码不一致';
+						return false;
+					} else {
+						confirmPasswordError.textContent = '';
+						return true;
+					}
+				}
+			});
+		</script>
 	</body>
 </html>
