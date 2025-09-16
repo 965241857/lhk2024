@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>帮助中心 - 毕业设计管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .help-container {
+            padding: 20px;
+        }
+        .help-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .help-header h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .help-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .help-tabs {
+            margin-bottom: 20px;
+        }
+        .help-content {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            padding: 25px;
+            min-height: 500px;
+        }
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 15px;
+        }
+        .faq-question {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .faq-question i {
+            margin-right: 10px;
+            color: #1E9FFF;
+            transition: transform 0.3s;
+        }
+        .faq-question .layui-icon {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+        .faq-question.active .layui-icon {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            color: #666;
+            line-height: 1.8;
+            padding-left: 26px;
+            display: none;
+        }
+        .guide-step {
+            margin-bottom: 30px;
+        }
+        .guide-step h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .guide-step h3 span {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #1E9FFF;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .guide-content {
+            line-height: 1.8;
+            color: #666;
+            padding-left: 34px;
+        }
+        .guide-content p {
+            margin-bottom: 10px;
+        }
+        .guide-content img {
+            max-width: 100%;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .contact-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .contact-item i {
+            font-size: 36px;
+            color: #1E9FFF;
+            margin-bottom: 15px;
+        }
+        .contact-item h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .contact-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            height: 42px;
+            padding: 0 15px 0 40px;
+            border: 1px solid #ddd;
+            border-radius: 21px;
+            font-size: 14px;
+        }
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        .search-results {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .search-results h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .no-results {
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+        }
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="layuimini-container help-container">
+        <div class="layuimini-main">
+            <!-- 页面标题 -->
+            <div class="help-header">
+                <h2><i class="fa fa-question-circle"></i> 毕业设计管理系统帮助中心</h2>
+                <p>这里可以找到系统使用过程中的常见问题解答和操作指南</p>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="搜索帮助内容..." id="helpSearch">
+            </div>
+            
+            <!-- 帮助选项卡 -->
+            <div class="layui-tab help-tabs" lay-filter="helpTab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" lay-id="student">学生指南</li>
+                    <li lay-id="teacher">教师指南</li>
+                    <li lay-id="admin">管理员指南</li>
+                    <li lay-id="faq">常见问题</li>
+                    <li lay-id="contact">联系支持</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!-- 学生指南 -->
+                    <div class="layui-tab-item layui-show help-content">
+                        <h3 style="margin-bottom: 20px; color: #333;">学生用户操作指南</h3>
+                        
+                        <div class="guide-step">
+                            <h3><span>1</span> 系统登录</h3>
+                            <div class="guide-content">
+                                <p>1. 访问毕业设计管理系统登录页面，输入您的学号和初始密码（默认密码为身份证后6位）。</p>
+                                <p>2. 首次登录系统会提示您修改密码，请设置新密码并妥善保管。</p>
+                                <p>3. 登录成功后，系统会自动跳转到学生个人中心页面。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>2</span> 课题浏览与筛选</h3>
+                            <div class="guide-content">
+                                <p>1. 点击左侧导航栏的"课题列表"进入课题浏览页面。</p>
+                                <p>2. 您可以通过以下方式筛选课题：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>按教师姓名筛选</li>
+                                    <li>按课题类型筛选（研究型、应用型、设计型）</li>
+                                    <li>按关键词搜索课题名称</li>
+                                </ul>
+                                <p>3. 点击课题卡片可查看课题详细信息，包括课题要求、预期成果和参考资料等。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>3</span> 课题选择与确认</h3>
+                            <div class="guide-content">
+                                <p>1. 在课题详情页面，点击"选择此课题"按钮提交选题申请。</p>
+                                <p>2. 系统会提示您确认选题信息，确认无误后提交。</p>
+                                <p>3. 提交后可在"我的选题"页面查看申请状态：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li><span class="layui-badge layui-bg-orange">待审核</span> - 等待教师确认</li>
+                                    <li><span class="layui-badge layui-bg-green">已确认</span> - 教师已同意您的选题</li>
+                                    <li><span class="layui-badge layui-bg-red">已拒绝</span> - 教师未同意您的选题</li>
+                                </ul>
+                                <p>4. 若选题未被确认，您可以取消申请并重新选择其他课题。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>4</span> 进度提交与管理</h3>
+                            <div class="guide-content">
+                                <p>1. 选题确认后，在"我的课题"页面可以查看课题详细信息和进度要求。</p>
+                                <p>2. 按照时间节点，点击"提交进度"按钮上传阶段性成果。</p>
+                                <p>3. 可查看教师对各阶段成果的评语和指导意见。</p>
+                                <p>4. 最终答辩前，需提交完整的毕业设计（论文）电子版。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 教师指南 -->
+                    <div class="layui-tab-item help-content">
+                        <h3 style="margin-bottom: 20px; color: #333;">教师用户操作指南</h3>
+                        
+                        <div class="guide-step">
+                            <h3><span>1</span> 课题申报</h3>
+                            <div class="guide-content">
+                                <p>1. 登录系统后，点击"课题管理"->"新增课题"进入课题申报页面。</p>
+                                <p>2. 填写课题基本信息，包括：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>课题名称（简洁明了，体现研究内容）</li>
+                                    <li>课题类型（研究型、应用型、设计型）</li>
+                                    <li>课题简介和研究内容</li>
+                                    <li>预期成果和要求</li>
+                                    <li>建议学生人数和专业背景</li>
+                                </ul>
+                                <p>3. 提交后等待管理员审核，审核通过的课题将在学生选题列表中显示。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>2</span> 学生选题管理</h3>
+                            <div class="guide-content">
+                                <p>1. 在"课题管理"->"我的课题"页面，可查看您申报的所有课题。</p>
+                                <p>2. 点击"查看申请"可查看选择该课题的学生列表。</p>
+                                <p>3. 对学生的选题申请进行处理：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>点击"同意"确认该学生选题</li>
+                                    <li>点击"拒绝"并填写拒绝原因</li>
+                                </ul>
+                                <p>4. 当多个学生申请同一课题时，可根据学生情况选择最合适的学生。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>3</span> 指导过程管理</h3>
+                            <div class="guide-content">
+                                <p>1. 在"指导管理"页面，可查看您指导的所有学生列表。</p>
+                                <p>2. 点击学生姓名可查看该学生的课题详情和提交的阶段性成果。</p>
+                                <p>3. 对学生提交的进度成果进行评阅，填写评语和指导意见。</p>
+                                <p>4. 可通过系统消息功能与学生进行沟通交流。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 管理员指南 -->
+                    <div class="layui-tab-item help-content">
+                        <h3 style="margin-bottom: 20px; color: #333;">管理员操作指南</h3>
+                        
+                        <div class="guide-step">
+                            <h3><span>1</span> 用户管理</h3>
+                            <div class="guide-content">
+                                <p>1. 在"用户管理"模块，可以查看系统中所有用户信息，包括学生、教师和管理员。</p>
+                                <p>2. 功能包括：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>新增用户：批量导入或单个添加用户</li>
+                                    <li>编辑用户：修改用户信息和角色权限</li>
+                                    <li>重置密码：为忘记密码的用户重置密码</li>
+                                    <li>禁用/启用用户：管理用户账号状态</li>
+                                </ul>
+                                <p>3. 建议在每学期开始前完成学生和教师信息的更新。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>2</span> 课题审核与管理</h3>
+                            <div class="guide-content">
+                                <p>1. 在"课题审核"页面，可查看所有教师提交的课题申报。</p>
+                                <p>2. 对课题进行审核：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>通过：审核通过的课题将对学生开放选择</li>
+                                    <li>驳回：填写驳回原因，课题将返回给教师修改</li>
+                                </ul>
+                                <p>3. 在"课题管理"页面可对所有课题进行管理，包括编辑、删除和置顶等操作。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <h3><span>3</span> 系统设置与数据管理</h3>
+                            <div class="guide-content">
+                                <p>1. 在"系统设置"中可配置：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>选题时间范围</li>
+                                    <li>教师最大课题数量</li>
+                                    <li>学生选题数量限制</li>
+                                    <li>各类通知模板</li>
+                                </ul>
+                                <p>2. 在"数据管理"中可进行：</p>
+                                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                                    <li>数据备份和恢复</li>
+                                    <li>各类统计数据导出</li>
+                                    <li>操作日志查看</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 常见问题 -->
+                    <div class="layui-tab-item help-content">
+                        <h3 style="margin-bottom: 20px; color: #333;">常见问题解答</h3>
+                        
+                        <div class="search-results" id="searchResults" style="display: none;">
+                            <h3>搜索结果：<span id="searchKeyword"></span></h3>
+                            <div id="resultsContainer"></div>
+                        </div>
+                        
+                        <div id="allFaq">
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    忘记登录密码怎么办？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    若您忘记登录密码，可以通过以下方式重置：
+                                    <br>1. 学生用户：联系辅导员或系管理员进行密码重置
+                                    <br>2. 教师用户：联系系统管理员重置密码
+                                    <br>密码重置后，默认密码为身份证后6位，请登录后及时修改。
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    可以同时选择多个课题吗？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    根据系统设置，通常情况下每位学生最多只能选择1个课题。在选题阶段，您可以先提交多个课题申请，但最终只能确认一个课题。建议您根据自己的兴趣和专业方向，选择最适合的课题进行申请。
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    课题申请被拒绝后可以再次申请吗？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    是的，如果您的课题申请被教师拒绝，您可以重新申请该课题或选择其他课题。建议您先查看教师的拒绝原因，了解被拒绝的具体情况后再决定是否重新申请或选择其他课题。
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    如何修改已提交的课题信息？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    教师用户可以在以下情况修改课题信息：
+                                    <br>1. 课题处于"待审核"状态：可以直接编辑修改
+                                    <br>2. 课题已审核通过但未被学生选择：需联系管理员协助修改
+                                    <br>3. 课题已有学生选择：原则上不允许修改核心内容，如有特殊情况需联系管理员处理
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    系统提示"选题时间已结束"该怎么办？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    如果系统提示选题时间已结束，您将无法再进行选题操作。此时请联系您所在系的教学秘书或辅导员，说明情况并咨询后续处理方式。通常情况下，超过选题时间未完成选题的学生需要由系里统一协调分配课题。
+                                </div>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFaq(this)">
+                                    <i class="fa fa-question-circle"></i>
+                                    如何查看课题的审核进度？
+                                    <i class="layui-icon layui-icon-down"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    教师用户可以在"我的课题"页面查看每个课题的审核状态：
+                                    <br>- 待审核：课题已提交，等待管理员审核
+                                    <br>- 已通过：课题审核通过，学生可以看到并申请
+                                    <br>- 已驳回：课题未通过审核，可查看驳回原因并修改后重新提交
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 联系支持 -->
+                    <div class="layui-tab-item help-content">
+                        <h3 style="margin-bottom: 20px; color: #333;">获取技术支持</h3>
+                        <p>如果您在使用系统过程中遇到任何问题，无法在帮助中心找到答案，请通过以下方式联系我们：</p>
+                        
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fa fa-envelope"></i>
+                                <h3>电子邮件</h3>
+                                <p>发送问题描述到：<br>support@graduation.edu.cn</p>
+                                <p style="margin-top: 10px; color: #999; font-size: 12px;">我们通常会在24小时内回复</p>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fa fa-phone"></i>
+                                <h3>电话支持</h3>
+                                <p>工作时间：周一至周五<br>上午 9:00-11:30，下午 14:30-17:00</p>
+                                <p>联系电话：010-12345678</p>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fa fa-map-marker"></i>
+                                <h3>现场支持</h3>
+                                <p>信息技术中心<br>图书馆B区302室</p>
+                                <p>服务时间：周一至周五 9:00-17:00</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 40px;">
+                            <h3 style="margin-bottom: 15px; color: #333;">提交问题反馈</h3>
+                            <form class="layui-form" lay-filter="feedbackForm">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">问题类型</label>
+                                    <div class="layui-input-block">
+                                        <select name="feedbackType" lay-verify="required">
+                                            <option value="">请选择问题类型</option>
+                                            <option value="login">登录相关</option>
+                                            <option value="topic">课题相关</option>
+                                            <option value="operation">操作问题</option>
+                                            <option value="function">功能建议</option>
+                                            <option value="other">其他问题</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">问题描述</label>
+                                    <div class="layui-input-block">
+                                        <textarea name="feedbackContent" placeholder="请详细描述您遇到的问题..." class="layui-textarea" rows="6" lay-verify="required"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系方式</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="contactInfo" placeholder="请留下您的邮箱或电话，方便我们联系您" class="layui-input" lay-verify="required">
+                                    </div>
+                                </div>
+                                
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button class="layui-btn" lay-submit lay-filter="submitFeedback">提交反馈</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script>
+        layui.use(['form', 'layer', 'element'], function() {
+            var form = layui.form;
+            var layer = layui.layer;
+            var element = layui.element;
+            var $ = layui.jquery;
+            
+            // 切换FAQ显示/隐藏
+            window.toggleFaq = function(element) {
+                var $element = $(element);
+                var $answer = $element.next('.faq-answer');
+                
+                $element.toggleClass('active');
+                if ($element.hasClass('active')) {
+                    $answer.slideDown(300);
+                } else {
+                    $answer.slideUp(300);
+                }
+            }
+            
+            // 搜索功能
+            $('#helpSearch').on('input', function() {
+                var keyword = $(this).val().trim().toLowerCase();
+                var $searchResults = $('#searchResults');
+                var $resultsContainer = $('#resultsContainer');
+                var $allFaq = $('#allFaq');
+                
+                if (keyword === '') {
+                    $searchResults.hide();
+                    $allFaq.show();
+                    return;
+                }
+                
+                $allFaq.hide();
+                $searchResults.show();
+                $('#searchKeyword').text(keyword);
+                $resultsContainer.empty();
+                
+                var hasResults = false;
+                
+                // 搜索FAQ问题和答案
+                $('.faq-item').each(function() {
+                    var question = $(this).find('.faq-question').text().toLowerCase();
+                    var answer = $(this).find('.faq-answer').text().toLowerCase();
+                    
+                    if (question.indexOf(keyword) !== -1 || answer.indexOf(keyword) !== -1) {
+                        hasResults = true;
+                        var clone = $(this).clone();
+                        clone.find('.faq-question').attr('onclick', 'toggleFaq(this)');
+                        $resultsContainer.append(clone);
+                    }
+                });
+                
+                if (!hasResults) {
+                    $resultsContainer.html(`
+                        <div class="no-results">
+                            <i class="fa fa-search"></i>
+                            <div>没有找到与"${keyword}"相关的内容</div>
+                            <div style="margin-top: 10px;">请尝试其他关键词或联系技术支持</div>
+                        </div>
+                    `);
+                }
+            });
+            
+            // 提交反馈
+            form.on('submit(submitFeedback)', function(data) {
+                layer.load(2);
+                
+                // 模拟提交过程
+                setTimeout(function() {
+                    layer.closeAll('loading');
+                    layer.msg('您的反馈已提交成功，我们会尽快处理', {icon: 1});
+                    form.val('feedbackForm', {
+                        'feedbackType': '',
+                        'feedbackContent': '',
+                        'contactInfo': ''
+                    });
+                }, 1500);
+                
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
+    

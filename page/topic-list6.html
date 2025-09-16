@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>选题统计 - 毕业设计管理系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui-src@2.6.3/dist/css/layui.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        .container {
+            padding: 20px;
+        }
+        .filter-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .stats-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1E9FFF;
+            margin: 5px 0;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .table-container {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .layui-table th, .layui-table td {
+            text-align: center;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+            display: none;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fa fa-bar-chart"></i> 毕业设计选题统计分析</h2>
+        
+        <!-- 筛选表单 -->
+        <div class="filter-form layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">时间范围</label>
+                    <div class="layui-input-inline">
+                        <select name="timeRange" id="timeRange">
+                            <option value="all">全部时间</option>
+                            <option value="currentYear">本年度</option>
+                            <option value="currentSemester">本学期</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 自定义时间范围 (默认隐藏) -->
+                <div class="layui-inline" id="customTimeRange" style="display: none;">
+                    <label class="layui-form-label">开始日期</label>
+                    <div class="layui-input-inline">
+                        <input type="date" id="startDate" class="layui-input">
+                    </div>
+                    <label class="layui-form-label">结束日期</label>
+                    <div class="layui-input-inline">
+                        <input type="date" id="endDate" class="layui-input">
+                    </div>
+                </div>
+                
+                <div class="layui-inline">
+                    <label class="layui-form-label">选题类型</label>
+                    <div class="layui-input-inline">
+                        <select name="topicType" id="topicType">
+                            <option value="all">全部类型</option>
+                            <option value="1">研究型</option>
+                            <option value="2">应用型</option>
+                            <option value="3">设计型</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态筛选</label>
+                    <div class="layui-input-inline">
+                        <select name="status" id="status">
+                            <option value="all">全部状态</option>
+                            <option value="1">待审核</option>
+                            <option value="2">已确认</option>
+                            <option value="3">已选定</option>
+                            <option value="4">已完成</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="layui-inline">
+                    <button class="layui-btn" onclick="filterData()"><i class="fa fa-filter"></i> 筛选</button>
+                    <button class="layui-btn layui-btn-primary" style="margin-left:10px" onclick="resetFilter()"><i class="fa fa-refresh"></i> 重置</button>
+                    <button class="layui-btn layui-btn-normal" style="margin-left:10px" onclick="exportData()"><i class="fa fa-download"></i> 导出</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 统计概览卡片 -->
+        <div class="stats-card">
+            <div class="table-header">
+                <span>统计概览</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">总选题数</div>
+                    <div class="stat-value" id="totalTopics">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">待审核选题</div>
+                    <div class="stat-value" id="pendingTopics">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">已确认选题</div>
+                    <div class="stat-value" id="confirmedTopics">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">已选定选题</div>
+                    <div class="stat-value" id="selectedTopics">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">已完成选题</div>
+                    <div class="stat-value" id="completedTopics">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">平均学生数/题</div>
+                    <div class="stat-value" id="avgStudents">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 教师统计表格 -->
+        <div class="table-container">
+            <div class="table-header">
+                <span>教师选题统计详情</span>
+                <div>
+                    <button class="layui-btn layui-btn-sm" onclick="sortTable('total', 'desc')">
+                        <i class="fa fa-sort-numeric-desc"></i> 按总数排序
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 空状态提示 -->
+            <div class="empty-state" id="tableEmptyState">
+                <i class="fa fa-table"></i>
+                <div>暂无符合条件的统计数据</div>
+            </div>
+            
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>教师姓名</th>
+                        <th>总选题数</th>
+                        <th>研究型</th>
+                        <th>应用型</th>
+                        <th>设计型</th>
+                        <th>待审核</th>
+                        <th>已确认</th>
+                        <th>已选定</th>
+                        <th>已完成</th>
+                        <th>平均学生数</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="statisticsTable">
+                    <!-- 表格数据将通过JS动态生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/layui-src@2.6.3/dist/layui.js"></script>
+    <script>
+        layui.use(['form', 'layer'], function() {
+            var form = layui.form;
+            var layer = layui.layer;
+            var $ = layui.jquery;
+            
+            // 原始数据存储
+            var allTopics = [];
+            var currentStats = [];
+            
+            // 页面加载时初始化
+            $(function() {
+                form.render(); // 渲染表单
+                initData();    // 初始化数据
+                
+                // 监听时间范围选择
+                $('#timeRange').change(function() {
+                    if ($(this).val() === 'custom') {
+                        $('#customTimeRange').show();
+                    } else {
+                        $('#customTimeRange').hide();
+                    }
+                });
+            });
+            
+            // 初始化数据
+            function initData() {
+                // 模拟从服务器获取的原始选题数据
+                allTopics = [
+                    // 张教授的选题
+                    {id:1, teacherId:1, teacher:"张教授", title:"基于深度学习的图像识别算法研究", 
+                     type:1, typeName:"研究型", status:2, statusName:"已确认", 
+                     students:2, createTime:"2025-01-15"},
+                    {id:2, teacherId:1, teacher:"张教授", title:"智能校园导航系统设计", 
+                     type:2, typeName:"应用型", status:3, statusName:"已选定", 
+                     students:3, createTime:"2025-02-20"},
+                    {id:3, teacherId:1, teacher:"张教授", title:"零件缺陷机器视觉检测", 
+                     type:1, typeName:"研究型", status:2, statusName:"已确认", 
+                     students:2, createTime:"2025-03-10"},
+                    {id:4, teacherId:1, teacher:"张教授", title:"校园安防异常行为识别", 
+                     type:2, typeName:"应用型", status:1, statusName:"待审核", 
+                     students:4, createTime:"2025-04-05"},
+                    
+                    // 李副教授的选题
+                    {id:5, teacherId:2, teacher:"李副教授", title:"B2C电商平台设计与实现", 
+                     type:2, typeName:"应用型", status:3, statusName:"已选定", 
+                     students:3, createTime:"2025-01-25"},
+                    {id:6, teacherId:2, teacher:"李副教授", title:"社交媒体情感分析系统", 
+                     type:1, typeName:"研究型", status:2, statusName:"已确认", 
+                     students:2, createTime:"2025-02-18"},
+                    {id:7, teacherId:2, teacher:"李副教授", title:"用户画像与精准推荐研究", 
+                     type:1, typeName:"研究型", status:4, statusName:"已完成", 
+                     students:2, createTime:"2024-11-30"},
+                    
+                    // 王老师的选题
+                    {id:8, teacherId:3, teacher:"王老师", title:"图书馆书籍智能分类系统", 
+                     type:2, typeName:"应用型", status:2, statusName:"已确认", 
+                     students:3, createTime:"2025-03-22"},
+                    {id:9, teacherId:3, teacher:"王老师", title:"校园二手交易平台设计", 
+                     type:2, typeName:"应用型", status:3, statusName:"已选定", 
+                     students:3, createTime:"2025-04-15"},
+                    
+                    // 赵讲师的选题
+                    {id:10, teacherId:4, teacher:"赵讲师", title:"移动办公APP设计与实现", 
+                     type:3, typeName:"设计型", status:2, statusName:"已确认", 
+                     students:3, createTime:"2025-02-10"},
+                    {id:11, teacherId:4, teacher:"赵讲师", title:"校园失物招领平台开发", 
+                     type:2, typeName:"应用型", status:3, statusName:"已选定", 
+                     students:2, createTime:"2025-03-05"},
+                    
+                    // 刘教授的选题
+                    {id:12, teacherId:5, teacher:"刘教授", title:"新能源汽车电池管理系统研究", 
+                     type:1, typeName:"研究型", status:2, statusName:"已确认", 
+                     students:2, createTime:"2025-01-30"},
+                    {id:13, teacherId:5, teacher:"刘教授", title:"智能家居控制系统设计", 
+                     type:3, typeName:"设计型", status:1, statusName:"待审核", 
+                     students:3, createTime:"2025-04-20"},
+                    {id:14, teacherId:5, teacher:"刘教授", title:"基于区块链的学历认证系统", 
+                     type:1, typeName:"研究型", status:4, statusName:"已完成", 
+                     students:2, createTime:"2024-12-15"}
+                ];
+                
+                // 初始加载全部数据
+                filterData();
+            }
+            
+            // 筛选数据
+            window.filterData = function() {
+                layer.load(1);
+                
+                setTimeout(function() {
+                    // 获取筛选条件
+                    var timeRange = $('#timeRange').val();
+                    var topicType = $('#topicType').val();
+                    var status = $('#status').val();
+                    var startDate = $('#startDate').val();
+                    var endDate = $('#endDate').val();
+                    
+                    // 应用筛选条件
+                    var filteredTopics = allTopics.filter(function(topic) {
+                        // 类型筛选
+                        if (topicType !== 'all' && topic.type.toString() !== topicType) {
+                            return false;
+                        }
+                        
+                        // 状态筛选
+                        if (status !== 'all' && topic.status.toString() !== status) {
+                            return false;
+                        }
+                        
+                        // 时间筛选
+                        var topicDate = new Date(topic.createTime);
+                        if (timeRange !== 'all') {
+                            var now = new Date();
+                            var currentYear = now.getFullYear();
+                            var currentMonth = now.getMonth();
+                            
+                            if (timeRange === 'currentYear') {
+                                // 本年度
+                                if (topicDate.getFullYear() !== currentYear) {
+                                    return false;
+                                }
+                            } else if (timeRange === 'currentSemester') {
+                                // 本学期（假设每年2个学期，以7月为分界）
+                                var isSecondSemester = currentMonth >= 6;
+                                var topicIsSecondSemester = topicDate.getMonth() >= 6;
+                                
+                                if (topicDate.getFullYear() !== currentYear || 
+                                    isSecondSemester !== topicIsSecondSemester) {
+                                    return false;
+                                }
+                            } else if (timeRange === 'custom') {
+                                // 自定义时间
+                                if (!startDate || !endDate) {
+                                    layer.msg('请选择完整的时间范围', {icon: 2});
+                                    return false;
+                                }
+                                
+                                var start = new Date(startDate);
+                                var end = new Date(endDate);
+                                end.setHours(23, 59, 59); // 设置为当天结束时间
+                                
+                                if (topicDate < start || topicDate > end) {
+                                    return false;
+                                }
+                            }
+                        }
+                        
+                        return true;
+                    });
+                    
+                    // 计算统计数据
+                    calculateStatistics(filteredTopics);
+                    
+                    // 更新界面
+                    updateStatsDisplay();
+                    
+                    layer.closeAll('loading');
+                }, 600);
+            }
+            
+            // 计算统计数据
+            function calculateStatistics(filteredTopics) {
+                // 初始化统计对象
+                var teacherStats = {};
+                var totalStats = {
+                    total: 0,
+                    pending: 0,
+                    confirmed: 0,
+                    selected: 0,
+                    completed: 0,
+                    research: 0,
+                    application: 0,
+                    design: 0,
+                    totalStudents: 0
+                };
+                
+                // 遍历筛选后的选题计算统计
+                filteredTopics.forEach(function(topic) {
+                    // 全局统计
+                    totalStats.total++;
+                    totalStats.totalStudents += topic.students;
+                    
+                    // 按类型统计
+                    if (topic.type === 1) totalStats.research++;
+                    else if (topic.type === 2) totalStats.application++;
+                    else if (topic.type === 3) totalStats.design++;
+                    
+                    // 按状态统计
+                    if (topic.status === 1) totalStats.pending++;
+                    else if (topic.status === 2) totalStats.confirmed++;
+                    else if (topic.status === 3) totalStats.selected++;
+                    else if (topic.status === 4) totalStats.completed++;
+                    
+                    // 教师个人统计
+                    if (!teacherStats[topic.teacherId]) {
+                        teacherStats[topic.teacherId] = {
+                            id: topic.teacherId,
+                            teacher: topic.teacher,
+                            total: 0,
+                            research: 0,
+                            application: 0,
+                            design: 0,
+                            pending: 0,
+                            confirmed: 0,
+                            selected: 0,
+                            completed: 0,
+                            totalStudents: 0,
+                            avgStudents: 0
+                        };
+                    }
+                    
+                    var teacher = teacherStats[topic.teacherId];
+                    teacher.total++;
+                    teacher.totalStudents += topic.students;
+                    
+                    // 教师类型统计
+                    if (topic.type === 1) teacher.research++;
+                    else if (topic.type === 2) teacher.application++;
+                    else if (topic.type === 3) teacher.design++;
+                    
+                    // 教师状态统计
+                    if (topic.status === 1) teacher.pending++;
+                    else if (topic.status === 2) teacher.confirmed++;
+                    else if (topic.status === 3) teacher.selected++;
+                    else if (topic.status === 4) teacher.completed++;
+                });
+                
+                // 计算平均值
+                if (totalStats.total > 0) {
+                    totalStats.avgStudents = (totalStats.totalStudents / totalStats.total).toFixed(1);
+                } else {
+                    totalStats.avgStudents = 0;
+                }
+                
+                // 计算每位教师的平均学生数
+                for (var id in teacherStats) {
+                    var teacher = teacherStats[id];
+                    if (teacher.total > 0) {
+                        teacher.avgStudents = (teacher.totalStudents / teacher.total).toFixed(1);
+                    } else {
+                        teacher.avgStudents = 0;
+                    }
+                }
+                
+                // 转换为数组并排序
+                currentStats = Object.values(teacherStats).sort(function(a, b) {
+                    return b.total - a.total; // 按总数降序
+                });
+                
+                // 保存全局统计
+                window.globalStats = totalStats;
+            }
+            
+            // 更新统计显示
+            function updateStatsDisplay() {
+                // 更新概览数据
+                var stats = window.globalStats || {
+                    total: 0,
+                    pending: 0,
+                    confirmed: 0,
+                    selected: 0,
+                    completed: 0,
+                    avgStudents: 0
+                };
+                
+                $('#totalTopics').text(stats.total);
+                $('#pendingTopics').text(stats.pending);
+                $('#confirmedTopics').text(stats.confirmed);
+                $('#selectedTopics').text(stats.selected);
+                $('#completedTopics').text(stats.completed);
+                $('#avgStudents').text(stats.avgStudents);
+                
+                // 更新表格数据
+                renderTable(currentStats);
+                
+                // 显示/隐藏空状态
+                if (currentStats.length === 0) {
+                    $('#tableEmptyState').show();
+                } else {
+                    $('#tableEmptyState').hide();
+                }
+            }
+            
+            // 渲染表格
+            function renderTable(data) {
+                var tableBody = $('#statisticsTable');
+                tableBody.empty();
+                
+                if (data.length === 0) return;
+                
+                data.forEach(function(item, index) {
+                    var row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${item.teacher}</td>
+                        <td>${item.total}</td>
+                        <td>${item.research}</td>
+                        <td>${item.application}</td>
+                        <td>${item.design}</td>
+                        <td>${item.pending}</td>
+                        <td>${item.confirmed}</td>
+                        <td>${item.selected}</td>
+                        <td>${item.completed}</td>
+                        <td>${item.avgStudents}</td>
+                        <td>
+                            <button class="layui-btn layui-btn-xs" onclick="viewDetails(${item.id})">
+                                <i class="fa fa-list"></i> 详情
+                            </button>
+                        </td>
+                    </tr>`;
+                    tableBody.append(row);
+                });
+            }
+            
+            // 表格排序
+            window.sortTable = function(field, order) {
+                if (!currentStats || currentStats.length === 0) return;
+                
+                currentStats.sort(function(a, b) {
+                    if (order === 'desc') {
+                        return b[field] - a[field];
+                    } else {
+                        return a[field] - b[field];
+                    }
+                });
+                
+                renderTable(currentStats);
+                
+                // 更新排序按钮文本
+                var btn = $(event.currentTarget);
+                btn.find('i').removeClass();
+                
+                if (order === 'desc') {
+                    btn.find('i').addClass('fa fa-sort-numeric-asc');
+                    btn.attr('onclick', `sortTable('${field}', 'asc')`);
+                } else {
+                    btn.find('i').addClass('fa fa-sort-numeric-desc');
+                    btn.attr('onclick', `sortTable('${field}', 'desc')`);
+                }
+            }
+            
+            // 重置筛选条件
+            window.resetFilter = function() {
+                $('#timeRange').val('all');
+                $('#topicType').val('all');
+                $('#status').val('all');
+                $('#startDate').val('');
+                $('#endDate').val('');
+                $('#customTimeRange').hide();
+                
+                form.render('select'); // 重新渲染下拉框
+                filterData(); // 重新加载数据
+            }
+            
+            // 导出数据
+            window.exportData = function() {
+                if (!currentStats || currentStats.length === 0) {
+                    layer.msg('没有可导出的数据', {icon: 2});
+                    return;
+                }
+                
+                layer.confirm('确定要导出当前统计数据吗？', {
+                    icon: 3,
+                    title: '导出数据'
+                }, function(index) {
+                    layer.load(1);
+                    
+                    // 模拟导出过程
+                    setTimeout(function() {
+                        // 在实际应用中，这里会调用后端接口生成Excel文件
+                        // 这里仅做演示
+                        var dataStr = "data:text/csv;charset=utf-8," 
+                            + "教师姓名,总选题数,研究型,应用型,设计型,待审核,已确认,已选定,已完成,平均学生数\n"
+                            + currentStats.map(item => {
+                                return `${item.teacher},${item.total},${item.research},${item.application},${item.design},${item.pending},${item.confirmed},${item.selected},${item.completed},${item.avgStudents}`;
+                            }).join("\n");
+                            
+                        // 创建下载链接
+                        var downloadAnchorNode = document.createElement('a');
+                        downloadAnchorNode.setAttribute("href", encodeURI(dataStr));
+                        downloadAnchorNode.setAttribute("download", "毕业设计选题统计_" + new Date().toLocaleDateString() + ".csv");
+                        document.body.appendChild(downloadAnchorNode);
+                        downloadAnchorNode.click();
+                        downloadAnchorNode.remove();
+                        
+                        layer.closeAll('loading');
+                        layer.msg('数据导出成功', {icon: 1});
+                    }, 1000);
+                    
+                    layer.close(index);
+                });
+            }
+            
+            // 查看详情
+            window.viewDetails = function(teacherId) {
+                // 筛选该教师的所有选题
+                var teacherTopics = allTopics.filter(topic => topic.teacherId === teacherId);
+                var teacherName = teacherTopics.length > 0 ? teacherTopics[0].teacher : '';
+                
+                // 构建详情HTML
+                var html = `<div style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                    <h3 style="text-align: center; margin-bottom: 15px;">${teacherName}的选题详情</h3>
+                    <table class="layui-table" lay-size="sm">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>选题名称</th>
+                                <th>类型</th>
+                                <th>状态</th>
+                                <th>学生数</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                teacherTopics.forEach(function(topic, index) {
+                    html += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${topic.title}</td>
+                        <td>${topic.typeName}</td>
+                        <td>
+                            <span class="layui-badge ${getStatusBadgeClass(topic.status)}">
+                                ${topic.statusName}
+                            </span>
+                        </td>
+                        <td>${topic.students}</td>
+                        <td>${topic.createTime}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table></div>`;
+                
+                // 打开弹窗
+                layer.open({
+                    type: 1,
+                    title: `${teacherName}的选题详情`,
+                    area: ['800px', '500px'],
+                    content: html
+                });
+            }
+            
+            // 获取状态标签样式
+            function getStatusBadgeClass(status) {
+                switch(status) {
+                    case 1: return 'layui-bg-orange'; // 待审核
+                    case 2: return 'layui-bg-green';  // 已确认
+                    case 3: return 'layui-bg-blue';   // 已选定
+                    case 4: return 'layui-bg-gray';   // 已完成
+                    default: return '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

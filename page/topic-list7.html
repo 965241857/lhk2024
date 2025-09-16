@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统设置 - 毕业设计课题管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .setting-container {
+            padding: 20px;
+        }
+        .setting-card {
+            margin-bottom: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .setting-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .setting-body {
+            padding: 20px;
+            background-color: #fff;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .layui-form-label {
+            width: 140px;
+        }
+        .layui-input-block {
+            margin-left: 170px;
+        }
+        .btn-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .help-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-left: 170px;
+        }
+        .setting-tab {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layuimini-container setting-container">
+        <div class="layuimini-main">
+            <!-- 页面标题 -->
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="fa fa-cog"></i> 系统设置
+                    <span class="layui-badge layui-bg-orange" style="margin-left:10px;">配置项将影响整个系统</span>
+                </div>
+            </div>
+            
+            <!-- 设置选项卡 -->
+            <div class="layui-tab setting-tab" lay-filter="settingTab">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" lay-id="basic">基础设置</li>
+                    <li lay-id="topic">选题设置</li>
+                    <li lay-id="permission">权限设置</li>
+                    <li lay-id="data">数据管理</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!-- 基础设置 -->
+                    <div class="layui-tab-item layui-show">
+                        <div class="layui-card setting-card">
+                            <div class="setting-header">
+                                <span>系统基本信息</span>
+                            </div>
+                            <div class="setting-body">
+                                <form class="layui-form" lay-filter="basicForm">
+                                    <div class="form-group">
+                                        <label class="layui-form-label">系统名称</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="systemName" value="毕业设计课题管理系统" 
+                                                lay-verify="required" placeholder="请输入系统名称" 
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="help-text">显示在浏览器标题和系统首页的名称</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">系统版本</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="systemVersion" value="V2.1.0" 
+                                                placeholder="请输入系统版本" autocomplete="off" 
+                                                class="layui-input" readonly>
+                                        </div>
+                                        <div class="help-text">系统当前版本号，仅管理员可见</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">学校名称</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="schoolName" value="XX大学" 
+                                                lay-verify="required" placeholder="请输入学校名称" 
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="help-text">用于在各类导出文件中显示的学校名称</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">联系邮箱</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="contactEmail" value="support@school.edu.cn" 
+                                                lay-verify="required|email" placeholder="请输入联系邮箱" 
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                        <div class="help-text">用于显示给用户的技术支持邮箱</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">首页公告</label>
+                                        <div class="layui-input-block">
+                                            <textarea name="announcement" placeholder="请输入首页公告内容" 
+                                                class="layui-textarea" rows="4">2025届毕业设计选题工作将于9月15日开始，请各位师生做好准备。</textarea>
+                                        </div>
+                                        <div class="help-text">将显示在系统首页的公告信息，支持简单HTML格式</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">自动登录</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="autoLogin" lay-skin="switch" 
+                                                lay-text="开启|关闭" checked>
+                                        </div>
+                                        <div class="help-text">是否允许用户选择"记住我"功能</div>
+                                    </div>
+                                    
+                                    <div class="btn-group">
+                                        <button class="layui-btn" lay-submit lay-filter="saveBasic">保存设置</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 选题设置 -->
+                    <div class="layui-tab-item">
+                        <div class="layui-card setting-card">
+                            <div class="setting-header">
+                                <span>选题流程设置</span>
+                            </div>
+                            <div class="setting-body">
+                                <form class="layui-form" lay-filter="topicForm">
+                                    <div class="form-group">
+                                        <label class="layui-form-label">选题开始时间</label>
+                                        <div class="layui-input-block">
+                                            <input type="date" name="topicStartTime" value="2025-09-15" 
+                                                lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">选题截止时间</label>
+                                        <div class="layui-input-block">
+                                            <input type="date" name="topicEndTime" value="2025-10-15" 
+                                                lay-verify="required" class="layui-input">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">教师最大选题数</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="maxTopicsPerTeacher" value="5" 
+                                                lay-verify="required|number|min(1)" min="1" 
+                                                placeholder="请输入最大选题数" class="layui-input">
+                                        </div>
+                                        <div class="help-text">每位教师最多可申报的课题数量</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">学生选题数量限制</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="maxSelectPerStudent" value="1" 
+                                                lay-verify="required|number|min(1)" min="1" 
+                                                placeholder="请输入选题数量限制" class="layui-input">
+                                        </div>
+                                        <div class="help-text">每位学生最多可选择的课题数量（一般为1）</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">单课题最大学生数</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="maxStudentsPerTopic" value="5" 
+                                                lay-verify="required|number|min(1)" min="1" 
+                                                placeholder="请输入最大学生数" class="layui-input">
+                                        </div>
+                                        <div class="help-text">每个课题最多可容纳的学生数量</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">选题审核流程</label>
+                                        <div class="layui-input-block">
+                                            <select name="reviewProcess" lay-verify="required">
+                                                <option value="1" selected>系主任审核</option>
+                                                <option value="2">教研室主任审核</option>
+                                                <option value="3">系主任+学院审核</option>
+                                                <option value="4">无需审核</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">选题冲突处理</label>
+                                        <div class="layui-input-block">
+                                            <select name="conflictHandling" lay-verify="required">
+                                                <option value="1">时间优先（先选先得）</option>
+                                                <option value="2" selected>教师选择</option>
+                                                <option value="3">按学生成绩排序</option>
+                                            </select>
+                                        </div>
+                                        <div class="help-text">多个学生选择同一课题时的处理方式</div>
+                                    </div>
+                                    
+                                    <div class="btn-group">
+                                        <button class="layui-btn" lay-submit lay-filter="saveTopic">保存设置</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 权限设置 -->
+                    <div class="layui-tab-item">
+                        <div class="layui-card setting-card">
+                            <div class="setting-header">
+                                <span>角色权限配置</span>
+                            </div>
+                            <div class="setting-body">
+                                <form class="layui-form" lay-filter="permissionForm">
+                                    <div class="form-group">
+                                        <label class="layui-form-label">学生权限</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="studentPerms" value="view" checked 
+                                                    lay-skin="primary" title="查看课题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="studentPerms" value="select" checked 
+                                                    lay-skin="primary" title="选择课题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="studentPerms" value="cancel" checked 
+                                                    lay-skin="primary" title="取消选择">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="studentPerms" value="comment" 
+                                                    lay-skin="primary" title="评论课题">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">教师权限</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="teacherPerms" value="add" checked 
+                                                    lay-skin="primary" title="添加课题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="teacherPerms" value="edit" checked 
+                                                    lay-skin="primary" title="编辑课题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="teacherPerms" value="delete" checked 
+                                                    lay-skin="primary" title="删除课题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="teacherPerms" value="approve" 
+                                                    lay-skin="primary" title="审核学生选题">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="teacherPerms" value="statistics" checked 
+                                                    lay-skin="primary" title="查看统计数据">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">管理员权限</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="adminPerms" value="userManage" checked 
+                                                    lay-skin="primary" title="用户管理">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="adminPerms" value="topicManage" checked 
+                                                    lay-skin="primary" title="课题管理">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="adminPerms" value="systemConfig" checked 
+                                                    lay-skin="primary" title="系统配置">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="adminPerms" value="dataExport" checked 
+                                                    lay-skin="primary" title="数据导出">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="adminPerms" value="logView" checked 
+                                                    lay-skin="primary" title="查看日志">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">审核权限</label>
+                                        <div class="layui-input-block">
+                                            <select name="reviewerRole" lay-verify="required">
+                                                <option value="dean">系主任</option>
+                                                <option value="chair" selected>教研室主任</option>
+                                                <option value="admin">系统管理员</option>
+                                                <option value="special">专职审核员</option>
+                                            </select>
+                                        </div>
+                                        <div class="help-text">拥有课题审核权限的角色</div>
+                                    </div>
+                                    
+                                    <div class="btn-group">
+                                        <button class="layui-btn" lay-submit lay-filter="savePermission">保存设置</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 数据管理 -->
+                    <div class="layui-tab-item">
+                        <div class="layui-card setting-card">
+                            <div class="setting-header">
+                                <span>数据备份与恢复</span>
+                            </div>
+                            <div class="setting-body">
+                                <form class="layui-form" lay-filter="dataForm">
+                                    <div class="form-group">
+                                        <label class="layui-form-label">自动备份</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="autoBackup" lay-skin="switch" 
+                                                lay-text="开启|关闭" checked>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">备份周期</label>
+                                        <div class="layui-input-block">
+                                            <select name="backupCycle" lay-verify="required">
+                                                <option value="daily">每天</option>
+                                                <option value="weekly" selected>每周</option>
+                                                <option value="monthly">每月</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">备份保留时间</label>
+                                        <div class="layui-input-block">
+                                            <select name="backupRetention">
+                                                <option value="7">7天</option>
+                                                <option value="30" selected>30天</option>
+                                                <option value="90">90天</option>
+                                                <option value="180">180天</option>
+                                                <option value="365">1年</option>
+                                            </select>
+                                        </div>
+                                        <div class="help-text">超过此时长的备份文件将自动删除</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">备份内容</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="backupContent" value="users" checked 
+                                                    lay-skin="primary" title="用户数据">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="backupContent" value="topics" checked 
+                                                    lay-skin="primary" title="课题数据">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="backupContent" value="selections" checked 
+                                                    lay-skin="primary" title="选题数据">
+                                            </div>
+                                            <div class="layui-form-checkbox">
+                                                <input type="checkbox" name="backupContent" value="logs" 
+                                                    lay-skin="primary" title="操作日志">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="layui-form-label">历史备份</label>
+                                        <div class="layui-input-block">
+                                            <table class="layui-table" lay-size="sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>备份时间</th>
+                                                        <th>文件大小</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>2025-09-01 02:00:00</td>
+                                                        <td>1.2 MB</td>
+                                                        <td>
+                                                            <button type="button" class="layui-btn layui-btn-xs" onclick="restoreBackup('202509010200')">恢复</button>
+                                                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteBackup('202509010200')">删除</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2025-08-25 02:00:00</td>
+                                                        <td>1.1 MB</td>
+                                                        <td>
+                                                            <button type="button" class="layui-btn layui-btn-xs" onclick="restoreBackup('202508250200')">恢复</button>
+                                                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteBackup('202508250200')">删除</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="btn-group">
+                                        <button class="layui-btn" lay-submit lay-filter="saveData">保存设置</button>
+                                        <button type="button" class="layui-btn layui-btn-normal" onclick="createBackup()">
+                                            <i class="fa fa-database"></i> 立即备份
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script>
+        layui.use(['form', 'layer', 'element'], function() {
+            var form = layui.form;
+            var layer = layui.layer;
+            var element = layui.element;
+            var $ = layui.jquery;
+            
+            // 从本地存储加载设置（实际应用中应从服务器加载）
+            function loadSettings() {
+                var settings = JSON.parse(localStorage.getItem('systemSettings') || '{}');
+                
+                // 加载基础设置
+                if (settings.basic) {
+                    form.val('basicForm', settings.basic);
+                }
+                
+                // 加载选题设置
+                if (settings.topic) {
+                    form.val('topicForm', settings.topic);
+                }
+                
+                // 加载权限设置
+                if (settings.permission) {
+                    form.val('permissionForm', settings.permission);
+                }
+                
+                // 加载数据设置
+                if (settings.data) {
+                    form.val('dataForm', settings.data);
+                }
+            }
+            
+            // 保存设置到本地存储（实际应用中应提交到服务器）
+            function saveSettings(type, data) {
+                var settings = JSON.parse(localStorage.getItem('systemSettings') || '{}');
+                settings[type] = data;
+                localStorage.setItem('systemSettings', JSON.stringify(settings));
+            }
+            
+            // 页面加载时加载设置
+            $(function() {
+                loadSettings();
+            });
+            
+            // 保存基础设置
+            form.on('submit(saveBasic)', function(data) {
+                layer.load(2);
+                setTimeout(function() {
+                    saveSettings('basic', data.field);
+                    layer.closeAll('loading');
+                    layer.msg('基础设置保存成功', {icon: 1});
+                }, 800);
+                return false;
+            });
+            
+            // 保存选题设置
+            form.on('submit(saveTopic)', function(data) {
+                // 验证时间逻辑
+                var start = new Date(data.field.topicStartTime);
+                var end = new Date(data.field.topicEndTime);
+                
+                if (start >= end) {
+                    layer.msg('选题开始时间不能晚于截止时间', {icon: 2});
+                    return false;
+                }
+                
+                layer.load(2);
+                setTimeout(function() {
+                    saveSettings('topic', data.field);
+                    layer.closeAll('loading');
+                    layer.msg('选题设置保存成功', {icon: 1});
+                }, 800);
+                return false;
+            });
+            
+            // 保存权限设置
+            form.on('submit(savePermission)', function(data) {
+                layer.load(2);
+                setTimeout(function() {
+                    saveSettings('permission', data.field);
+                    layer.closeAll('loading');
+                    layer.msg('权限设置保存成功', {icon: 1});
+                }, 800);
+                return false;
+            });
+            
+            // 保存数据设置
+            form.on('submit(saveData)', function(data) {
+                layer.load(2);
+                setTimeout(function() {
+                    saveSettings('data', data.field);
+                    layer.closeAll('loading');
+                    layer.msg('数据设置保存成功', {icon: 1});
+                }, 800);
+                return false;
+            });
+            
+            // 立即备份
+            window.createBackup = function() {
+                layer.confirm('确定要立即创建数据备份吗？', {
+                    icon: 3,
+                    title: '数据备份'
+                }, function(index) {
+                    layer.close(index);
+                    layer.load(2);
+                    
+                    // 模拟备份过程
+                    setTimeout(function() {
+                        layer.closeAll('loading');
+                        layer.msg('数据备份成功', {icon: 1});
+                        
+                        // 刷新页面以显示新备份
+                        element.render('tab', 'settingTab');
+                    }, 1500);
+                });
+            }
+            
+            // 恢复备份
+            window.restoreBackup = function(time) {
+                layer.confirm('确定要从 ' + time.substr(0,4) + '-' + time.substr(4,2) + '-' + time.substr(6,2) + ' ' + 
+                              time.substr(8,2) + ':' + time.substr(10,2) + ' 的备份恢复数据吗？', {
+                    icon: 3,
+                    title: '恢复数据',
+                    btn: ['确认恢复', '取消'],
+                    btn1: function(index) {
+                        layer.close(index);
+                        layer.load(2);
+                        
+                        // 模拟恢复过程
+                        setTimeout(function() {
+                            layer.closeAll('loading');
+                            layer.msg('数据恢复成功', {icon: 1});
+                        }, 2000);
+                    }
+                });
+            }
+            
+            // 删除备份
+            window.deleteBackup = function(time) {
+                layer.confirm('确定要删除 ' + time.substr(0,4) + '-' + time.substr(4,2) + '-' + time.substr(6,2) + ' ' + 
+                              time.substr(8,2) + ':' + time.substr(10,2) + ' 的备份文件吗？', {
+                    icon: 3,
+                    title: '删除备份',
+                    btn: ['确认删除', '取消'],
+                    btn1: function(index) {
+                        layer.close(index);
+                        layer.load(2);
+                        
+                        // 模拟删除过程
+                        setTimeout(function() {
+                            layer.closeAll('loading');
+                            layer.msg('备份文件已删除', {icon: 1});
+                            
+                            // 刷新页面以更新备份列表
+                            element.render('tab', 'settingTab');
+                        }, 800);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

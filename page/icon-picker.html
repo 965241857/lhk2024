@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>毕业设计选题管理系统 - 图标选择器</title>
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-iconpicker-body.layui-iconpicker-body-page .hide {display: none;}
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <blockquote class="layui-elem-quote">
+            图标选择器可用于毕业设计选题管理系统中各类功能模块的图标设置，<br>
+            如课题分类、通知类型、权限标识等场景。选择合适的图标可增强系统的直观性和易用性。<br>
+            <a href="javascript:history.back()" class="layui-btn layui-btn-normal">返回上一页</a>
+        </blockquote>
+
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <label for="" class="layui-form-label">课题类型图标</label>
+                <div class="layui-input-block">
+                    <input type="text" id="iconPicker" lay-filter="iconPicker" class="hide" placeholder="选择适合该课题类型的图标">
+                    <div class="layui-form-mid layui-word-aux">用于课题分类展示，选择能体现课题性质的图标</div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="" class="layui-form-label">系统功能图标</label>
+                <div class="layui-input-block">
+                    <input type="text" id="iconPicker1" value="fa-graduation-cap" lay-filter="iconPicker2" class="hide">
+                    <div class="layui-form-mid layui-word-aux">用于系统菜单和功能按钮，选择能体现功能用途的图标</div>
+                </div>
+            </div>
+        </div>
+
+        <pre class="layui-code">
+        // 课题类型图标选择器配置
+        iconPickerFa.render({
+            // 选择器，推荐使用input
+            elem: '#iconPicker',
+            // fa 图标接口
+            url: "../lib/font-awesome-4.7.0/less/variables.less",
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 点击回调
+            click: function (data) {
+                console.log('选择的课题图标:', data);
+                // 实际应用中可在此处保存选择的图标信息
+            },
+            // 渲染成功后的回调
+            success: function (d) {
+                console.log('图标选择器加载完成', d);
+            }
+        });
+        </pre>
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>图标使用建议</legend>
+        </fieldset>
+        <ul class="layui-form layui-form-text">
+            <li class="layui-form-item"><i class="fa fa-lightbulb-o layui-icon" style="color:#333;"></i> 课题类型建议使用与学科相关的图标（如fa-laptop用于计算机类课题）</li>
+            <li class="layui-form-item"><i class="fa fa-lightbulb-o layui-icon" style="color:#333;"></i> 操作按钮建议使用直观的动作图标（如fa-check用于审核通过，fa-times用于驳回）</li>
+            <li class="layui-form-item"><i class="fa fa-lightbulb-o layui-icon" style="color:#333;"></i> 通知提醒建议使用醒目的提示图标（如fa-bell用于系统通知）</li>
+        </ul>
+
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['iconPickerFa', 'form', 'layer'], function () {
+        var iconPickerFa = layui.iconPickerFa,
+            form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        // 课题类型图标选择器
+        iconPickerFa.render({
+            elem: '#iconPicker',
+            url: "../lib/font-awesome-4.7.0/less/variables.less",
+            search: true,
+            page: true,
+            limit: 12,
+            click: function (data) {
+                console.log('选择的课题类型图标:', data);
+                layer.msg('已选择图标: ' + data.icon, {icon: 1});
+            },
+            success: function (d) {
+                console.log('课题类型图标选择器加载完成', d);
+            }
+        });
+
+        // 系统功能图标选择器
+        iconPickerFa.render({
+            elem: '#iconPicker1',
+            url: "../lib/font-awesome-4.7.0/less/variables.less",
+            search: true,
+            page: true,
+            limit: 12,
+            click: function (data) {
+                console.log('选择的系统功能图标:', data);
+                layer.msg('已选择功能图标: ' + data.icon, {icon: 1});
+            },
+            success: function (d) {
+                console.log('系统功能图标选择器加载完成', d);
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

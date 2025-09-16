@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统设置 - 毕业设计选题管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">系统名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="systemName" lay-verify="required" lay-reqtext="系统名称不能为空" placeholder="请输入系统名称"  value="毕业设计选题管理系统" class="layui-input">
+                    <tip>填写本毕业设计选题管理系统的名称。</tip>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">系统访问地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="systemUrl" lay-verify="required" lay-reqtext="系统访问地址不能为空" placeholder="请输入系统访问地址"  value="http://graduation.project.edu.cn" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">选题开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="selectionStartDate" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">学生开始选择毕业设计选题的日期</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">选题截止时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="selectionEndDate" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">学生选择毕业设计选题的截止日期</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">开题报告截止时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="proposalEndDate" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">学生提交开题报告的截止日期</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">论文提交截止时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="thesisEndDate" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">学生提交毕业论文的截止日期</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">最大文件上传</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="maxFileSize" lay-verify="number" value="51200" class="layui-input">
+                </div>
+                <div class="layui-input-inline layui-input-company">KB</div>
+                <div class="layui-form-mid layui-word-aux">提示：1 MB = 1024 KB，建议设置50MB（51200 KB）</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">允许上传文件类型</label>
+                <div class="layui-input-block">
+                    <input type="text" name="allowedFileTypes" value="pdf|doc|docx|ppt|pptx|xls|xlsx|jpg|png|zip|rar" class="layui-input">
+                    <tip>文件类型之间用竖线|分隔，如：pdf|doc|docx</tip>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">每人可选题目数</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="maxTopicsPerStudent" lay-verify="number" value="3" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">学生最多可选择的意向题目数量</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">每题最大人数</label>
+                <div class="layui-input-inline" style="width: 80px;">
+                    <input type="text" name="maxStudentsPerTopic" lay-verify="number" value="5" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">每个毕业设计题目最多允许的学生数量</div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required">系统公告</label>
+                <div class="layui-input-block">
+                    <textarea name="systemNotice" class="layui-textarea" placeholder="输入系统公告内容，将在首页显示">欢迎使用毕业设计选题管理系统，请在规定时间内完成选题工作。如有疑问，请联系辅导员。</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required">版权信息</label>
+                <div class="layui-input-block">
+                    <textarea name="copyright" class="layui-textarea">© 2023 学校名称 - 毕业设计选题管理系统 版权所有</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="setting">确认保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(setting)', function (data) {
+            // 模拟保存操作
+            var loadingIndex = layer.load(2);
+            
+            setTimeout(function(){
+                layer.close(loadingIndex);
+                layer.msg('系统设置保存成功', {icon: 1});
+            }, 800);
+            
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

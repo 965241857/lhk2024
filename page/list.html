@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>课题列表 - 毕业设计选题管理系统</title>
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/layuimini.css?v=2.0.4.2" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <style>
+        .project-container {
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .layui-btn-group {
+            margin-bottom: 15px;
+        }
+        .layui-table {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+    <div class="project-container">
+        <!-- 按钮组 -->
+        <div class="layui-btn-group">
+            <button class="layui-btn layui-btn-normal" id="addProject"><i class="fa fa-plus"></i> 新增课题</button>
+            <button class="layui-btn layui-btn-danger" id="deleteBatch"><i class="fa fa-trash"></i> 批量删除</button>
+        </div>
+
+        <!-- 表格区域 -->
+        <table class="layui-table" lay-size="sm" lay-even>
+            <thead>
+                <tr>
+                    <th style="width: 40px;"><input type="checkbox" lay-skin="primary" lay-filter="checkAll"></th>
+                    <th>序号</th>
+                    <th>课题名称</th>
+                    <th>课题类型</th>
+                    <th>指导教师</th>
+                    <th>所属学院</th>
+                    <th>难度系数</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="projectTableBody">
+                <!-- 数据将通过JS从JSON加载 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 新增/编辑课题弹窗（默认隐藏） -->
+    <div id="projectModal" style="display: none; padding: 20px;">
+        <form class="layui-form" lay-filter="projectForm">
+            <input type="hidden" name="id"> <!-- 隐藏字段：课题ID -->
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">课题名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" required lay-verify="required" placeholder="请输入课题名称" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">课题类型</label>
+                <div class="layui-input-block">
+                    <select name="type" required lay-verify="required">
+                        <option value="">请选择类型</option>
+                        <option value="应用开发">应用开发</option>
+                        <option value="理论研究">理论研究</option>
+                        <option value="设计类">设计类</option>
+                        <option value="实验研究">实验研究</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">指导教师</label>
+                <div class="layui-input-block">
+                    <input type="text" name="teacher" required lay-verify="required" placeholder="请输入指导教师姓名" class="layui-input">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属学院</label>
+                <div class="layui-input-block">
+                    <select name="college" required lay-verify="required">
+                        <option value="">请选择学院</option>
+                        <option value="计算机学院">计算机学院</option>
+                        <option value="电子信息学院">电子信息学院</option>
+                        <option value="商学院">商学院</option>
+                        <option value="文学院">文学院</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">难度系数</label>
+                <div class="layui-input-block">
+                    <select name="difficulty" required lay-verify="required">
+                        <option value="">请选择难度</option>
+                        <option value="简单">简单</option>
+                        <option value="中等">中等</option>
+                        <option value="较难">较难</option>
+                        <option value="困难">困难</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="status" required lay-verify="required">
+                        <option value="待审核">待审核</option>
+                        <option value="已通过">已通过</option>
+                        <option value="未通过">未通过</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script>
+        layui.use(['jquery', 'form', 'layer'], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                layer = layui.layer;
+
+            // 存储课题数据（全局变量，替代后端数据库）
+            let projectList = [];
+
+            // 初始化：加载课题数据
+            $(function () {
+                loadProjectData();
+            });
+
+            // 1. 加载课题数据（从JSON文件读取）
+            function loadProjectData() {
+                $.getJSON('projectData.json')
+                    .done(function (data) {
+                        projectList = data; // 保存数据到全局变量
+                        renderProjectTable(data);
+                    })
+                    .fail(function () {
+                        // 若JSON文件加载失败，使用默认数据
+                        projectList = [
+                            { id: 1, name: "基于Web的在线考试系统", type: "应用开发", teacher: "张教授", college: "计算机学院", difficulty: "中等", status: "已通过" },
+                            { id: 2, name: "大数据教学评估分析", type: "理论研究", teacher: "李老师", college: "计算机学院", difficulty: "较难", status: "待审核" }
+                        ];
+                        renderProjectTable(projectList);
+                        layer.msg('使用默认课题数据', { icon: 0 });
+                    });
+            }
+
+            // 2. 渲染课题表格
+            function renderProjectTable(data) {
+                var html = '';
+                if (data.length === 0) {
+                    html = '<tr><td colspan="9" style="text-align: center;">暂无课题数据</td></tr>';
+                } else {
+                    $.each(data, function (index, item) {
+                        // 状态标签样式
+                        var statusClass = item.status === "已通过" ? "layui-bg-green" : 
+                                         (item.status === "未通过" ? "layui-bg-red" : "layui-bg-orange");
+                        
+                        html += `<tr>
+                            <td><input type="checkbox" lay-skin="primary" data-id="${item.id}"></td>
+                            <td>${index + 1}</td>
+                            <td>${item.name}</td>
+                            <td>${item.type}</td>
+                            <td>${item.teacher}</td>
+                            <td>${item.college}</td>
+                            <td>${item.difficulty}</td>
+                            <td><span class="layui-badge ${statusClass}">${item.status}</span></td>
+                            <td>
+                                <button class="layui-btn layui-btn-xs layui-btn-normal edit-btn" data-id="${item.id}">编辑</button>
+                                <button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" data-id="${item.id}">删除</button>
+                            </td>
+                        </tr>`;
+                    });
+                }
+                $('#projectTableBody').html(html);
+                form.render('checkbox'); // 重新渲染复选框
+            }
+
+            // 3. 全选功能
+            form.on('checkbox(checkAll)', function (data) {
+                var checked = data.elem.checked;
+                $('#projectTableBody input[type="checkbox"]').each(function () {
+                    this.checked = checked;
+                });
+                form.render('checkbox');
+            });
+
+            // 4. 新增课题
+            $('#addProject').click(function () {
+                form.val('projectForm', { 
+                    id: '', 
+                    name: '', 
+                    type: '', 
+                    teacher: '', 
+                    college: '', 
+                    difficulty: '', 
+                    status: '待审核' 
+                });
+                openProjectModal('新增课题', function (formData) {
+                    // 生成新ID
+                    const newId = projectList.length > 0 
+                        ? Math.max(...projectList.map(item => item.id)) + 1 
+                        : 1;
+                    // 添加到数据列表
+                    projectList.push({ ...formData, id: newId });
+                    renderProjectTable(projectList);
+                    layer.msg('新增成功');
+                });
+            });
+
+            // 5. 编辑课题
+            $(document).on('click', '.edit-btn', function () {
+                var id = $(this).data('id');
+                var item = projectList.find(p => p.id === id);
+                if (item) {
+                    form.val('projectForm', item);
+                    openProjectModal('编辑课题', function (formData) {
+                        // 更新数据
+                        const index = projectList.findIndex(p => p.id === id);
+                        projectList[index] = { ...formData, id: id };
+                        renderProjectTable(projectList);
+                        layer.msg('编辑成功');
+                    });
+                }
+            });
+
+            // 6. 单个删除
+            $(document).on('click', '.delete-btn', function () {
+                var id = $(this).data('id');
+                layer.confirm('确定删除该课题？', function (index) {
+                    projectList = projectList.filter(p => p.id !== id);
+                    renderProjectTable(projectList);
+                    layer.close(index);
+                    layer.msg('删除成功');
+                });
+            });
+
+            // 7. 批量删除
+            $('#deleteBatch').click(function () {
+                var ids = [];
+                $('#projectTableBody input[type="checkbox"]:checked').each(function () {
+                    ids.push($(this).data('id'));
+                });
+                if (ids.length === 0) {
+                    layer.msg('请选择要删除的课题', { icon: 2 });
+                    return;
+                }
+                layer.confirm(`确定删除选中的${ids.length}条课题？`, function (index) {
+                    projectList = projectList.filter(p => !ids.includes(p.id));
+                    renderProjectTable(projectList);
+                    layer.close(index);
+                    layer.msg('批量删除成功');
+                });
+            });
+
+            // 打开弹窗通用方法
+            function openProjectModal(title, callback) {
+                var index = layer.open({
+                    type: 1,
+                    title: title,
+                    content: $('#projectModal'),
+                    area: ['500px', '450px'],
+                    btn: ['确定', '取消'],
+                    yes: function (layIndex) {
+                        // 验证表单
+                        if (form.validate()) {
+                            var data = form.val('projectForm');
+                            callback(data); // 执行回调（新增/编辑）
+                            layer.close(layIndex);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

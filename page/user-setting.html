@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>基本资料 - 毕业设计选题管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-form-item .layui-input-company {width: auto;padding-right: 10px;line-height: 38px;}
+        .profile-avatar {text-align: center;margin-bottom: 20px;}
+        .avatar-img {width: 120px;height: 120px;border-radius: 50%;border: 4px solid #f2f2f2;cursor: pointer;}
+        .avatar-text {margin-top: 10px;color: #666;}
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!-- 头像上传区域 -->
+        <div class="profile-avatar">
+            <img src="https://picsum.photos/200/200" alt="用户头像" class="avatar-img">
+            <p class="avatar-text">点击头像更换</p>
+        </div>
+
+        <div class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名"  value="zhangshan" class="layui-input" readonly>
+                    <tip>用户名用于系统登录，不可修改。</tip>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label required">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="realname" lay-verify="required" lay-reqtext="姓名不能为空" placeholder="请输入真实姓名"  value="张三" class="layui-input">
+                    <tip>请填写真实姓名，将用于毕业设计相关文档。</tip>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">角色类型</label>
+                <div class="layui-input-block">
+                    <select name="role" lay-verify="required" disabled>
+                        <option value="admin" selected>系统管理员</option>
+                        <option value="teacher">教师</option>
+                        <option value="student">学生</option>
+                    </select>
+                    <tip>角色类型决定您在系统中的操作权限。</tip>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">所属学院</label>
+                <div class="layui-input-block">
+                    <select name="college" lay-verify="required">
+                        <option value="">请选择学院</option>
+                        <option value="cs" selected>计算机学院</option>
+                        <option value="ee">电子信息工程学院</option>
+                        <option value="me">机械工程学院</option>
+                        <option value="ma">材料学院</option>
+                        <option value="bu">商学院</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">联系电话</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="phone" lay-verify="required|phone" lay-reqtext="联系电话不能为空" placeholder="请输入联系电话"  value="13800138000" class="layui-input">
+                    <tip>用于接收系统重要通知和消息。</tip>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">电子邮箱</label>
+                <div class="layui-input-block">
+                    <input type="email" name="email" lay-verify="required|email" lay-reqtext="电子邮箱不能为空" placeholder="请输入电子邮箱"  value="zhangshan@example.com" class="layui-input">
+                    <tip>用于系统登录和重要信息推送。</tip>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">个人简介</label>
+                <div class="layui-input-block">
+                    <textarea name="introduction" class="layui-textarea" placeholder="请输入个人简介">负责毕业设计选题系统的管理与维护工作，确保选题流程顺利进行。</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form','layer','miniTab'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            miniTab = layui.miniTab;
+
+        // 头像上传预览功能
+        document.querySelector('.avatar-img').addEventListener('click', function() {
+            layer.open({
+                title: '更换头像',
+                type: 1,
+                area: ['450px', '300px'],
+                content: `
+                    <div style="padding: 20px;">
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn" id="avatarUpload">上传图片</button>
+                            <div class="layui-upload-list" style="margin-top: 15px;">
+                                <img class="layui-upload-img" id="previewImg" style="max-width: 200px;">
+                                <p id="uploadText"></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                btn: ['确认更换', '取消'],
+                yes: function(index) {
+                    var previewImg = document.getElementById('previewImg').src;
+                    if (previewImg) {
+                        document.querySelector('.avatar-img').src = previewImg;
+                        layer.close(index);
+                        layer.msg('头像更换成功');
+                    } else {
+                        layer.msg('请先上传图片', {icon: 5});
+                    }
+                }
+            });
+            
+            // 初始化上传组件
+            layui.upload.render({
+                elem: '#avatarUpload',
+                url: '../api/uploadAvatar',
+                accept: 'images',
+                acceptMime: 'image/*',
+                exts: 'jpg|png|gif|bmp|jpeg',
+                auto: false,
+                bindAction: '#LAY-upload-commit',
+                choose: function(obj) {
+                    obj.preview(function(index, file, result) {
+                        document.getElementById('previewImg').src = result;
+                        document.getElementById('uploadText').innerText = '预览图: ' + file.name;
+                    });
+                }
+            });
+        });
+
+        // 监听提交
+        form.on('submit(saveBtn)', function (data) {
+            // 模拟数据提交
+            layer.load(2);
+            setTimeout(function() {
+                layer.closeAll('loading');
+                layer.msg('资料保存成功', {icon: 1});
+                miniTab.deleteCurrentByIframe();
+            }, 800);
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

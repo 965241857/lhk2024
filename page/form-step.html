@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>毕业设计选题申报</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <link rel="stylesheet" href="../js/lay-module/step-lay/step.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <div class="layui-card-body" style="padding-top: 40px;">
+                    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+                        <div carousel-item>
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 40px;">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">学生学号:</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" placeholder="请填写您的学号" class="layui-input" lay-verify="required" required />
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题名称:</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" placeholder="请填写选题名称" value="" class="layui-input" lay-verify="required" required>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题类型:</label>
+                                        <div class="layui-input-block">
+                                            <select lay-verify="required">
+                                                <option value="1" selected>软件开发</option>
+                                                <option value="2">理论研究</option>
+                                                <option value="3">实验分析</option>
+                                                <option value="4">设计类</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">指导教师:</label>
+                                        <div class="layui-input-block">
+                                            <select lay-verify="required">
+                                                <option value="">请选择指导教师</option>
+                                                <option value="1">张教授</option>
+                                                <option value="2">李副教授</option>
+                                                <option value="3">王老师</option>
+                                                <option value="4">赵老师</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题简介:</label>
+                                        <div class="layui-input-block">
+                                            <textarea placeholder="请简要描述课题内容和研究方向" value="" class="layui-textarea"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" lay-submit lay-filter="formStep">
+                                                &emsp;下一步&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 40px;">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">学生学号:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">2020010101</div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题名称:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">基于Java的毕业设计选题管理系统设计与实现</div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题类型:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">软件开发</div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">指导教师:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">张教授</div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">课题难度:</label>
+                                        <div class="layui-input-block">
+                                            <select lay-verify="required">
+                                                <option value="1" selected>一般</option>
+                                                <option value="2">较难</option>
+                                                <option value="3">困难</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">预计完成时间:</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" class="layui-input" placeholder="请选择预计完成时间" id="date">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button type="button" class="layui-btn layui-btn-primary pre">上一步</button>
+                                            <button class="layui-btn" lay-submit lay-filter="formStep2">
+                                                &emsp;确认提交&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <div style="text-align: center;margin-top: 90px;">
+                                    <i class="layui-icon layui-circle"
+                                       style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                                    <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                                        选题提交成功
+                                    </div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 20px;">请等待指导教师审核，审核结果将通过系统通知您</div>
+                                </div>
+                                <div style="text-align: center;margin-top: 50px;">
+                                    <button class="layui-btn next">重新选择课题</button>
+                                    <button class="layui-btn layui-btn-primary">查看我的选题</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div style="color: #666;margin-top: 30px;margin-bottom: 40px;padding-left: 30px;">
+                        <h3>选题说明</h3><br>
+                        <h4>选题要求</h4>
+                        <p>1. 每位学生只能申报一个毕业设计课题，选题应与所学专业相关；</p>
+                        <p>2. 课题难度应适中，确保在规定时间内能够完成；</p>
+                        <p>3. 选题需经指导教师审核通过后方可正式确定。</p>
+                        <br><h4>注意事项</h4>
+                        <p>1. 请认真填写课题信息，确保准确无误；</p>
+                        <p>2. 审核未通过的选题，学生需重新提交申报；</p>
+                        <p>3. 选题确定后，原则上不得随意更改，特殊情况需提交申请并经批准。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'step', 'laydate'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            step = layui.step,
+            laydate = layui.laydate;
+
+        // 渲染日期选择器
+        laydate.render({
+            elem: '#date'
+        });
+
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%', //设置容器宽度
+            stepWidth: '750px',
+            height: '500px',
+            stepItems: [{
+                title: '填写选题信息'
+            }, {
+                title: '确认选题信息'
+            }, {
+                title: '提交完成'
+            }]
+        });
+
+
+        form.on('submit(formStep)', function (data) {
+            step.next('#stepForm');
+            return false;
+        });
+
+        form.on('submit(formStep2)', function (data) {
+            step.next('#stepForm');
+            return false;
+        });
+
+        $('.pre').click(function () {
+            step.pre('#stepForm');
+        });
+
+        $('.next').click(function () {
+            step.next('#stepForm');
+        });
+    })
+</script>
+</body>
+</html>

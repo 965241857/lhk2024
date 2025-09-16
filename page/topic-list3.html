@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>学生列表 - 毕业设计课题选择管理系统</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+		<link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+		<link rel="stylesheet" href="../css/public.css" media="all">
+		<style>
+			.layui-card {
+				margin-bottom: 15px;
+			}
+
+			.layui-form-item {
+				margin-bottom: 15px;
+			}
+
+			.operation-btn {
+				margin-right: 5px;
+			}
+
+			.add-btn-container {
+				text-align: right;
+				margin-bottom: 10px;
+			}
+
+			.reset-data-btn {
+				margin-left: 10px;
+				background-color: #FF5722;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="layuimini-container">
+			<div class="layuimini-main">
+				<!-- 页面标题区域 -->
+				<div class="layui-card">
+					<div class="layui-card-header">
+						<i class="fa fa-user icon"></i>学生列表
+						<button class="layui-btn layui-btn-sm reset-data-btn" onclick="forceInitData()">
+							<i class="fa fa-refresh"></i> 重新加载20条数据
+						</button>
+					</div>
+				</div>
+
+				<!-- 搜索和添加区域 -->
+				<div class="layui-card">
+					<div class="layui-card-body">
+						<div class="add-btn-container">
+							<button class="layui-btn" onclick="openAddModal()">
+								<i class="fa fa-plus"></i> 新增学生
+							</button>
+						</div>
+
+						<form class="layui-form" lay-filter="searchForm" id="searchForm">
+							<div class="layui-form-item">
+								<div class="layui-col-md3">
+									<input type="text" name="studentName" placeholder="模糊搜学生姓名（如：张）" autocomplete="off"
+										class="layui-input">
+								</div>
+								<div class="layui-col-md3">
+									<select name="major">
+										<option value="">所有专业</option>
+										<option value="1">计算机科学与技术</option>
+										<option value="2">软件工程</option>
+										<option value="3">人工智能</option>
+										<option value="4">数据科学与大数据技术</option>
+										<option value="5">信息安全</option>
+									</select>
+								</div>
+								<div class="layui-col-md3">
+									<select name="topicStatus">
+										<option value="">所有选题状态</option>
+										<option value="1">未选题</option>
+										<option value="2">已选题待确认</option>
+										<option value="3">选题已确认</option>
+										<option value="4">课题已完成</option>
+									</select>
+								</div>
+								<div class="layui-col-md3">
+									<button class="layui-btn" lay-submit lay-filter="searchBtn"><i
+											class="fa fa-search"></i> 搜索</button>
+									<button type="reset" class="layui-btn layui-btn-primary" id="resetBtn"><i
+											class="fa fa-refresh"></i> 重置搜索</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<!-- 学生列表 -->
+				<div class="layui-card">
+					<div class="layui-card-body">
+						<table class="layui-table" lay-size="sm">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>学生姓名</th>
+									<th>学号</th>
+									<th>专业</th>
+									<th>年级</th>
+									<th>选题状态</th>
+									<th>指导教师</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="studentTableBody">
+								<!-- 数据将动态生成 -->
+							</tbody>
+						</table>
+
+						<div id="pagination" style="text-align: right;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 添加/编辑弹窗 -->
+		<div id="studentModal" style="display: none;">
+			<form class="layui-form" lay-filter="studentForm" id="studentForm">
+				<input type="hidden" name="id">
+				<div class="layui-form-item">
+					<label class="layui-form-label">学生姓名</label>
+					<div class="layui-input-block">
+						<input type="text" name="studentName" required
+							lay-verify="required|studentNameLength|validChar|chineseOnly"
+							placeholder="请输入学生姓名（2-4汉字）" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">学号</label>
+					<div class="layui-input-block">
+						<input type="text" name="studentId" required lay-verify="required|studentIdUnique|studentIdFormat"
+							placeholder="请输入12位学号（如202101010001）" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">专业</label>
+					<div class="layui-input-block">
+						<select name="majorId" required lay-verify="required">
+							<option value="">请选择专业</option>
+							<option value="1">计算机科学与技术</option>
+							<option value="2">软件工程</option>
+							<option value="3">人工智能</option>
+							<option value="4">数据科学与大数据技术</option>
+							<option value="5">信息安全</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年级</label>
+					<div class="layui-input-block">
+						<select name="grade" required lay-verify="required">
+							<option value="">请选择年级</option>
+							<option value="2021">2021级</option>
+							<option value="2022">2022级</option>
+							<option value="2023">2023级</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">选题状态</label>
+					<div class="layui-input-block">
+						<select name="topicStatus" required lay-verify="required">
+							<option value="1">未选题</option>
+							<option value="2">已选题待确认</option>
+							<option value="3">选题已确认</option>
+							<option value="4">课题已完成</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">指导教师</label>
+					<div class="layui-input-block">
+						<select name="teacherId">
+							<option value="">未分配</option>
+							<option value="1">张教授</option>
+							<option value="2">李副教授</option>
+							<option value="3">王老师</option>
+							<option value="4">赵讲师</option>
+							<option value="5">刘教授</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">联系电话</label>
+					<div class="layui-input-block">
+						<input type="text" name="phone" lay-verify="phone|phoneUnique"
+							placeholder="请输入11位手机号码" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit lay-filter="saveStudent">保存</button>
+						<button type="button" class="layui-btn layui-btn-primary" onclick="closeModal()">取消</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!-- 详情弹窗 -->
+		<div id="detailModal" style="display: none;">
+			<div class="layui-form">
+				<div class="layui-form-item">
+					<label class="layui-form-label">学生姓名</label>
+					<div class="layui-input-block" id="detailStudentName"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">学号</label>
+					<div class="layui-input-block" id="detailStudentId"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">专业</label>
+					<div class="layui-input-block" id="detailMajor"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年级</label>
+					<div class="layui-input-block" id="detailGrade"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">选题状态</label>
+					<div class="layui-input-block" id="detailTopicStatus"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">指导教师</label>
+					<div class="layui-input-block" id="detailTeacher"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">联系电话</label>
+					<div class="layui-input-block" id="detailPhone"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">所选课题</label>
+					<div class="layui-input-block" id="detailTopicName"></div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">录入时间</label>
+					<div class="layui-input-block" id="detailCreateTime"></div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+		<script>
+			layui.use(['form', 'laypage', 'layer'], function() {
+				var form = layui.form;
+				var laypage = layui.laypage;
+				var layer = layui.layer;
+				var $ = layui.jquery;
+
+				// 全局变量
+				var currentPage = 1;
+				var pageSize = 10;
+				var totalCount = 0;
+				var searchParams = {};
+				var modalIndex = null;
+
+				// 初始化页面
+				init();
+
+				function init() {
+					// 强制初始化20条数据
+					forceInitData();
+					// 加载列表
+					loadStudentList();
+					// 绑定事件
+					bindEvents();
+					// 注册自定义校验规则
+					registerCustomValidators();
+				}
+
+				// 20条完整模拟数据
+				function getFullMockData() {
+					return [
+						// 计算机科学与技术（ID:1）学生
+						{
+							id: 1,
+							studentName: '张明',
+							studentId: '202101010001',
+							majorId: 1,
+							majorName: '计算机科学与技术',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 1,
+							teacherName: '张教授',
+							phone: '13800138001',
+							topicName: '基于深度学习的图像识别算法研究',
+							createTime: '2025-09-01'
+						},
+						{
+							id: 2,
+							studentName: '李华',
+							studentId: '202101010002',
+							majorId: 1,
+							majorName: '计算机科学与技术',
+							grade: '2021',
+							topicStatus: 2,
+							topicStatusName: '已选题待确认',
+							teacherId: 1,
+							teacherName: '张教授',
+							phone: '13800138002',
+							topicName: '智能校园导航系统设计',
+							createTime: '2025-08-28'
+						},
+						{
+							id: 3,
+							studentName: '王芳',
+							studentId: '202101010003',
+							majorId: 1,
+							majorName: '计算机科学与技术',
+							grade: '2021',
+							topicStatus: 1,
+							topicStatusName: '未选题',
+							teacherId: '',
+							teacherName: '未分配',
+							phone: '13800138003',
+							topicName: '未选题',
+							createTime: '2025-09-05'
+						},
+						{
+							id: 4,
+							studentName: '刘伟',
+							studentId: '202201010001',
+							majorId: 1,
+							majorName: '计算机科学与技术',
+							grade: '2022',
+							topicStatus: 1,
+							topicStatusName: '未选题',
+							teacherId: '',
+							teacherName: '未分配',
+							phone: '13800138004',
+							topicName: '未选题',
+							createTime: '2025-09-03'
+						},
+						{
+							id: 5,
+							studentName: '陈静',
+							studentId: '202201010002',
+							majorId: 1,
+							majorName: '计算机科学与技术',
+							grade: '2022',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 2,
+							teacherName: '李副教授',
+							phone: '13800138005',
+							topicName: 'B2C电商平台设计与实现',
+							createTime: '2025-08-30'
+						},
+
+						// 软件工程（ID:2）学生
+						{
+							id: 6,
+							studentName: '赵强',
+							studentId: '202102010001',
+							majorId: 2,
+							majorName: '软件工程',
+							grade: '2021',
+							topicStatus: 4,
+							topicStatusName: '课题已完成',
+							teacherId: 2,
+							teacherName: '李副教授',
+							phone: '13800138006',
+							topicName: '用户画像与精准推荐研究',
+							createTime: '2025-08-25'
+						},
+						{
+							id: 7,
+							studentName: '孙丽',
+							studentId: '202102010002',
+							majorId: 2,
+							majorName: '软件工程',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 3,
+							teacherName: '王老师',
+							phone: '13800138007',
+							topicName: '图书馆书籍智能分类系统',
+							createTime: '2025-09-04'
+						},
+						{
+							id: 8,
+							studentName: '周杰',
+							studentId: '202102010003',
+							majorId: 2,
+							majorName: '软件工程',
+							grade: '2021',
+							topicStatus: 2,
+							topicStatusName: '已选题待确认',
+							teacherId: 3,
+							teacherName: '王老师',
+							phone: '13800138008',
+							topicName: '校园二手交易平台设计',
+							createTime: '2025-08-27'
+						},
+						{
+							id: 9,
+							studentName: '吴敏',
+							studentId: '202202010001',
+							majorId: 2,
+							majorName: '软件工程',
+							grade: '2022',
+							topicStatus: 1,
+							topicStatusName: '未选题',
+							teacherId: '',
+							teacherName: '未分配',
+							phone: '13800138009',
+							topicName: '未选题',
+							createTime: '2025-09-01'
+						},
+						{
+							id: 10,
+							studentName: '郑亮',
+							studentId: '202202010002',
+							majorId: 2,
+							majorName: '软件工程',
+							grade: '2022',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 4,
+							teacherName: '赵讲师',
+							phone: '13800138010',
+							topicName: '移动办公APP设计与实现',
+							createTime: '2025-08-26'
+						},
+
+						// 人工智能（ID:3）学生
+						{
+							id: 11,
+							studentName: '钱小红',
+							studentId: '202103010001',
+							majorId: 3,
+							majorName: '人工智能',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 1,
+							teacherName: '张教授',
+							phone: '13800138011',
+							topicName: '零件缺陷机器视觉检测',
+							createTime: '2025-09-05'
+						},
+						{
+							id: 12,
+							studentName: '孙伟',
+							studentId: '202103010002',
+							majorId: 3,
+							majorName: '人工智能',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 2,
+							teacherName: '李副教授',
+							phone: '13800138012',
+							topicName: '社交媒体情感分析系统',
+							createTime: '2025-09-02'
+						},
+						{
+							id: 13,
+							studentName: '周婷',
+							studentId: '202203010001',
+							majorId: 3,
+							majorName: '人工智能',
+							grade: '2022',
+							topicStatus: 1,
+							topicStatusName: '未选题',
+							teacherId: '',
+							teacherName: '未分配',
+							phone: '13800138013',
+							topicName: '未选题',
+							createTime: '2025-08-29'
+						},
+						{
+							id: 14,
+							studentName: '吴迪',
+							studentId: '202203010002',
+							majorId: 3,
+							majorName: '人工智能',
+							grade: '2022',
+							topicStatus: 2,
+							topicStatusName: '已选题待确认',
+							teacherId: 5,
+							teacherName: '刘教授',
+							phone: '13800138014',
+							topicName: '新能源汽车电池管理系统研究',
+							createTime: '2025-08-24'
+						},
+
+						// 数据科学与大数据技术（ID:4）学生
+						{
+							id: 15,
+							studentName: '郑华',
+							studentId: '202104010001',
+							majorId: 4,
+							majorName: '数据科学与大数据技术',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 3,
+							teacherName: '王老师',
+							phone: '13800138015',
+							topicName: '基于大数据的学生成绩分析',
+							createTime: '2025-09-01'
+						},
+						{
+							id: 16,
+							studentName: '王佳',
+							studentId: '202104010002',
+							majorId: 4,
+							majorName: '数据科学与大数据技术',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 2,
+							teacherName: '李副教授',
+							phone: '13800138016',
+							topicName: '电商用户行为分析平台',
+							createTime: '2025-09-04'
+						},
+
+						// 信息安全（ID:5）学生
+						{
+							id: 17,
+							studentName: '冯伟',
+							studentId: '202105010001',
+							majorId: 5,
+							majorName: '信息安全',
+							grade: '2021',
+							topicStatus: 4,
+							topicStatusName: '课题已完成',
+							teacherId: 5,
+							teacherName: '刘教授',
+							phone: '13800138017',
+							topicName: '基于区块链的学历认证系统',
+							createTime: '2025-07-20'
+						},
+						{
+							id: 18,
+							studentName: '陈思思',
+							studentId: '202105010002',
+							majorId: 5,
+							majorName: '信息安全',
+							grade: '2021',
+							topicStatus: 3,
+							topicStatusName: '选题已确认',
+							teacherId: 1,
+							teacherName: '张教授',
+							phone: '13800138018',
+							topicName: '校园安防异常行为识别',
+							createTime: '2025-09-03'
+						},
+						{
+							id: 19,
+							studentName: '黄志强',
+							studentId: '202205010001',
+							majorId: 5,
+							majorName: '信息安全',
+							grade: '2022',
+							topicStatus: 2,
+							topicStatusName: '已选题待确认',
+							teacherId: 4,
+							teacherName: '赵讲师',
+							phone: '13800138019',
+							topicName: '校园失物招领平台开发',
+							createTime: '2025-09-02'
+						},
+						{
+							id: 20,
+							studentName: '林小燕',
+							studentId: '202205010002',
+							majorId: 5,
+							majorName: '信息安全',
+							grade: '2022',
+							topicStatus: 1,
+							topicStatusName: '未选题',
+							teacherId: '',
+							teacherName: '未分配',
+							phone: '13800138020',
+							topicName: '未选题',
+							createTime: '2025-09-05'
+						}
+					];
+				}
+
+				// 强制初始化数据
+				function forceInitData() {
+					const fullData = getFullMockData();
+					localStorage.setItem('students', JSON.stringify(fullData));
+				}
+
+				// 获取所有学生数据
+				function getAllStudents() {
+					return JSON.parse(localStorage.getItem('students') || '[]');
+				}
+
+				// 保存学生数据
+				function saveStudents(students) {
+					localStorage.setItem('students', JSON.stringify(students));
+				}
+
+				// 加载学生列表
+				function loadStudentList() {
+					let allStudents = getAllStudents();
+
+					// 搜索过滤逻辑
+					let filteredStudents = allStudents.filter(student => {
+						// 学生姓名模糊搜索（忽略大小写）
+						if (searchParams.studentName) {
+							const searchStr = searchParams.studentName.toLowerCase();
+							if (!student.studentName.toLowerCase().includes(searchStr)) {
+								return false;
+							}
+						}
+						// 专业筛选
+						if (searchParams.major && student.majorId != searchParams.major) {
+							return false;
+						}
+						// 选题状态筛选
+						if (searchParams.topicStatus && student.topicStatus != searchParams.topicStatus) {
+							return false;
+						}
+						return true;
+					});
+
+					// 分页处理
+					totalCount = filteredStudents.length;
+					let startIndex = (currentPage - 1) * pageSize;
+					let currentStudents = filteredStudents.slice(startIndex, startIndex + pageSize);
+
+					// 渲染表格
+					renderTable(currentStudents);
+					// 渲染分页
+					renderPagination();
+				}
+
+				// 渲染表格
+				function renderTable(students) {
+					const tableBody = $('#studentTableBody');
+					tableBody.empty();
+
+					if (students.length === 0) {
+						tableBody.html('<tr><td colspan="8" style="text-align: center;">暂无数据</td></tr>');
+						return;
+					}
+
+					students.forEach((student, index) => {
+						const statusStyles = {
+							1: 'layui-bg-gray',
+							2: 'layui-bg-orange',
+							3: 'layui-bg-blue',
+							4: 'layui-bg-green'
+						};
+
+						const tr = `
+                    <tr>
+                        <td>${(currentPage - 1) * pageSize + index + 1}</td>
+                        <td>${student.studentName}</td>
+                        <td>${student.studentId}</td>
+                        <td>${student.majorName}</td>
+                        <td>${student.grade}级</td>
+                        <td><span class="layui-badge ${statusStyles[student.topicStatus]}">${student.topicStatusName}</span></td>
+                        <td>${student.teacherName}</td>
+                        <td>
+                            <button class="layui-btn layui-btn-xs operation-btn" onclick="viewStudent(${student.id})">查看</button>
+                            <button class="layui-btn layui-btn-normal layui-btn-xs operation-btn" onclick="editStudent(${student.id})">编辑</button>
+                            <button class="layui-btn layui-btn-danger layui-btn-xs operation-btn" onclick="deleteStudent(${student.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+						tableBody.append(tr);
+					});
+				}
+
+				// 渲染分页
+				function renderPagination() {
+					laypage.render({
+						elem: 'pagination',
+						count: totalCount,
+						limit: pageSize,
+						limits: [5, 10, 15, 20],
+						curr: currentPage,
+						layout: ['prev', 'page', 'next', 'count', 'limit', 'skip'],
+						jump: function(obj, first) {
+							if (!first) {
+								currentPage = obj.curr;
+								pageSize = obj.limit;
+								loadStudentList();
+							}
+						}
+					});
+				}
+
+				// 绑定事件
+				function bindEvents() {
+					// 搜索事件
+					form.on('submit(searchBtn)', function(data) {
+						searchParams = {};
+						if (data.field.studentName && data.field.studentName.trim() !== '') {
+							searchParams.studentName = data.field.studentName.trim();
+						}
+						if (data.field.major) {
+							searchParams.major = data.field.major;
+						}
+						if (data.field.topicStatus) {
+							searchParams.topicStatus = data.field.topicStatus;
+						}
+						currentPage = 1;
+						loadStudentList();
+						return false;
+					});
+
+					// 重置搜索
+					$('#resetBtn').click(function() {
+						$('#searchForm')[0].reset();
+						searchParams = {};
+						currentPage = 1;
+						loadStudentList();
+					});
+				}
+
+				// 注册自定义校验规则
+				function registerCustomValidators() {
+					// 1. 学生姓名长度限制（2-4字）
+					form.verify({
+						studentNameLength: function(value) {
+							const trimValue = value.trim();
+							if (trimValue.length < 2) {
+								return '学生姓名至少2个字符！';
+							}
+							if (trimValue.length > 4) {
+								return '学生姓名最多4个字符！';
+							}
+						},
+						// 2. 学号唯一校验
+						studentIdUnique: function(value, item) {
+							const students = getAllStudents();
+							const currentId = $(item).closest('#studentForm').find('input[name="id"]').val();
+							const isDuplicate = students.some(student => {
+								return student.studentId.trim() === value.trim() && student.id != currentId;
+							});
+							if (isDuplicate) {
+								return '该学号已存在，请修改！';
+							}
+						},
+						// 3. 学号格式校验（12位数字）
+						studentIdFormat: function(value) {
+							const reg = /^\d{12}$/;
+							if (!reg.test(value.trim())) {
+								return '学号必须是12位数字！';
+							}
+						},
+						// 4. 手机号唯一校验
+						phoneUnique: function(value, item) {
+							if (!value.trim()) return; // 允许为空
+							
+							const students = getAllStudents();
+							const currentId = $(item).closest('#studentForm').find('input[name="id"]').val();
+							const isDuplicate = students.some(student => {
+								return student.phone && student.phone.trim() === value.trim() && student.id != currentId;
+							});
+							if (isDuplicate) {
+								return '该手机号已被使用，请修改！';
+							}
+						},
+						// 5. 过滤特殊字符
+						validChar: function(value, item) {
+							const invalidReg = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]\\|=~￥…（）—【】、；：”“’。，、？]/im;
+							if (invalidReg.test(value.trim())) {
+								const fieldName = $(item).prev('label').text().replace('：', '');
+								return `${fieldName}不允许包含特殊字符（如~!@#$%等）！`;
+							}
+						},
+						// 6. 只能输入汉字校验
+						chineseOnly: function(value, item) {
+							// 允许为空（空值由required规则处理）
+							if (!value.trim()) return;
+
+							// 匹配所有汉字
+							const chineseReg = /^[\u4e00-\u9fa5]+$/;
+							if (!chineseReg.test(value.trim())) {
+								const fieldName = $(item).prev('label').text().replace('：', '');
+								return `${fieldName}只能输入汉字！`;
+							}
+						}
+					});
+				}
+
+				// 打开添加弹窗
+				window.openAddModal = function() {
+					form.val('studentForm', {
+						id: '',
+						studentName: '',
+						studentId: '',
+						majorId: '',
+						grade: '',
+						topicStatus: '1',
+						teacherId: '',
+						phone: ''
+					});
+
+					modalIndex = layer.open({
+						title: '新增学生',
+						type: 1,
+						area: '600px',
+						content: $('#studentModal').html()
+					});
+
+					form.render();
+					form.on('submit(saveStudent)', function(data) {
+						saveStudentData(data.field);
+						return false;
+					});
+				}
+
+				// 编辑学生
+				window.editStudent = function(id) {
+					const students = getAllStudents();
+					const student = students.find(s => s.id == id);
+					if (!student) return;
+
+					form.val('studentForm', {
+						id: student.id,
+						studentName: student.studentName,
+						studentId: student.studentId,
+						majorId: student.majorId,
+						grade: student.grade,
+						topicStatus: student.topicStatus,
+						teacherId: student.teacherId || '',
+						phone: student.phone || ''
+					});
+
+					modalIndex = layer.open({
+						title: '编辑学生',
+						type: 1,
+						area: '600px',
+						content: $('#studentModal').html()
+					});
+
+					form.render();
+					form.on('submit(saveStudent)', function(data) {
+						saveStudentData(data.field);
+						return false;
+					});
+				}
+
+				// 查看学生
+				window.viewStudent = function(id) {
+					const students = getAllStudents();
+					const student = students.find(s => s.id == id);
+					if (!student) return;
+
+					$('#detailStudentName').text(student.studentName);
+					$('#detailStudentId').text(student.studentId);
+					$('#detailMajor').text(student.majorName);
+					$('#detailGrade').text(student.grade + '级');
+					
+					const statusStyles = {
+						1: 'layui-bg-gray',
+						2: 'layui-bg-orange',
+						3: 'layui-bg-blue',
+						4: 'layui-bg-green'
+					};
+					$('#detailTopicStatus').html(
+						`<span class="layui-badge ${statusStyles[student.topicStatus]}">${student.topicStatusName}</span>`);
+
+					$('#detailTeacher').text(student.teacherName);
+					$('#detailPhone').text(student.phone || '未填写');
+					$('#detailTopicName').text(student.topicName);
+					$('#detailCreateTime').text(student.createTime);
+
+					modalIndex = layer.open({
+						title: '学生详情',
+						type: 1,
+						area: '600px',
+						content: $('#detailModal').html()
+					});
+				}
+
+				// 保存学生数据
+				function saveStudentData(formData) {
+					const students = getAllStudents();
+					const majorMap = {
+						'1': '计算机科学与技术',
+						'2': '软件工程',
+						'3': '人工智能',
+						'4': '数据科学与大数据技术',
+						'5': '信息安全'
+					};
+					const teacherMap = {
+						'': '未分配',
+						'1': '张教授',
+						'2': '李副教授',
+						'3': '王老师',
+						'4': '赵讲师',
+						'5': '刘教授'
+					};
+					const topicStatusMap = {
+						'1': { id: 1, name: '未选题' },
+						'2': { id: 2, name: '已选题待确认' },
+						'3': { id: 3, name: '选题已确认' },
+						'4': { id: 4, name: '课题已完成' }
+					};
+
+					// 格式化日期
+					const formatDate = () => {
+						const date = new Date();
+						return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+					};
+
+					if (formData.id) {
+						// 编辑
+						const index = students.findIndex(s => s.id == formData.id);
+						if (index !== -1) {
+							// 保留原有的创建时间和课题名称
+							students[index] = {
+								...students[index],
+								studentName: formData.studentName,
+								studentId: formData.studentId,
+								majorId: parseInt(formData.majorId),
+								majorName: majorMap[formData.majorId],
+								grade: formData.grade,
+								topicStatus: parseInt(formData.topicStatus),
+								topicStatusName: topicStatusMap[formData.topicStatus].name,
+								teacherId: formData.teacherId,
+								teacherName: teacherMap[formData.teacherId],
+								phone: formData.phone
+							};
+						}
+					} else {
+						// 新增
+						const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+						students.push({
+							id: newId,
+							studentName: formData.studentName,
+							studentId: formData.studentId,
+							majorId: parseInt(formData.majorId),
+							majorName: majorMap[formData.majorId],
+							grade: formData.grade,
+							topicStatus: parseInt(formData.topicStatus),
+							topicStatusName: topicStatusMap[formData.topicStatus].name,
+							teacherId: formData.teacherId,
+							teacherName: teacherMap[formData.teacherId],
+							phone: formData.phone,
+							topicName: formData.topicStatus == 1 ? '未选题' : '待分配',
+							createTime: formatDate()
+						});
+					}
+
+					saveStudents(students);
+					layer.close(modalIndex);
+					loadStudentList();
+					layer.msg(formData.id ? '修改成功' : '新增成功', {
+						icon: 1
+					});
+				}
+
+				// 删除学生
+				window.deleteStudent = function(id) {
+					layer.confirm('确定要删除这个学生吗？', {
+						icon: 3,
+						title: '提示'
+					}, function(index) {
+						let students = getAllStudents();
+						students = students.filter(student => student.id != id);
+						saveStudents(students);
+
+						layer.close(index);
+						loadStudentList();
+						layer.msg('删除成功', {
+							icon: 1
+						});
+					});
+				}
+
+				// 关闭弹窗
+				window.closeModal = function() {
+					layer.close(modalIndex);
+				}
+			});
+		</script>
+	</body>
+</html>

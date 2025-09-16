@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>毕业设计文件上传 - 毕业设计选题管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/jq-module/zyupload/zyupload-1.0.0.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote">
+            <i class="layui-icon layui-icon-upload"></i> 毕业设计相关文件上传
+            <div style="margin-top: 10px;">
+                <span class="layui-badge">支持格式：PDF、Word、Excel、PPT、图片等</span>
+                <span class="layui-badge layui-bg-orange">最大文件：50MB</span>
+            </div>
+        </blockquote>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">文件类型</label>
+            <div class="layui-input-block">
+                <select name="fileType" lay-verify="required">
+                    <option value="">请选择上传文件类型</option>
+                    <option value="proposal">开题报告</option>
+                    <option value="midterm">中期检查报告</option>
+                    <option value="thesis">毕业论文</option>
+                    <option value="slides">答辩PPT</option>
+                    <option value="other">其他相关文件</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="zyupload" class="zyupload"></div>
+        
+        <div class="layui-form-item" style="margin-top: 20px;">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="confirmUpload">确认上传所选文件</button>
+                <button type="reset" class="layui-btn layui-btn-primary">清空选择</button>
+            </div>
+        </div>
+        
+        <div class="layui-card" style="margin-top: 20px;">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-file"></i> 已上传文件列表
+            </div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <thead>
+                        <tr>
+                            <th>文件名</th>
+                            <th>文件类型</th>
+                            <th>大小</th>
+                            <th>上传时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>开题报告初稿.pdf</td>
+                            <td>开题报告</td>
+                            <td>1.2MB</td>
+                            <td>2023-09-10 14:30</td>
+                            <td>
+                                <a href="#" class="layui-btn layui-btn-xs">下载</a>
+                                <a href="#" class="layui-btn layui-btn-xs layui-btn-danger">删除</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <pre class="layui-code">
+        // 初始化插件
+        $("#zyupload").zyUpload({
+            width: "650px",                 // 宽度
+            height: "400px",                // 高度
+            itemWidth: "140px",             // 文件项的宽度
+            itemHeight: "115px",            // 文件项的高度
+            url: "api/project/upload",      // 上传文件的路径
+            fileType: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "jpg", "png"],// 支持的文件类型
+            fileSize: 51200000,             // 上传文件的大小限制(50MB)
+            multiple: true,                 // 允许多个文件上传
+            dragDrop: true,                 // 允许拖动上传
+            tailor: true,                   // 允许裁剪图片
+            del: true,                      // 允许删除文件
+            finishDel: false,               // 上传完成后不删除预览
+            /* 回调接口 */
+            onSelect: function (selectFiles, allFiles) {
+                console.info("已选择文件：");
+                console.info(selectFiles);
+            },
+            onDelete: function (file, files) {
+                console.info("已删除文件：" + file.name);
+            },
+            onSuccess: function (file, response) {
+                console.info("文件上传成功：" + file.name);
+                layer.msg(file.name + " 上传成功", {icon: 1});
+                // 实际应用中应刷新文件列表
+            },
+            onFailure: function (file, response) {
+                console.info("文件上传失败：" + file.name);
+                layer.msg(file.name + " 上传失败", {icon: 5});
+            },
+            onComplete: function (response) {
+                console.info("所有文件上传完成");
+                layer.msg("所有文件上传完成", {icon: 1});
+            }
+        });
+        </pre>
+    </div>
+</div>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../lib/jq-module/zyupload/zyupload-1.0.0.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 初始化上传插件
+        $("#zyupload").zyUpload({
+            width: "650px",                 // 宽度
+            height: "400px",                // 高度
+            itemWidth: "140px",             // 文件项的宽度
+            itemHeight: "115px",            // 文件项的高度
+            url: "api/project/upload",      // 上传文件的路径
+            // 毕业设计常用文件类型
+            fileType: ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "jpg", "png"],
+            fileSize: 51200000,             // 上传文件的大小限制(50MB)
+            multiple: true,                 // 允许多个文件上传
+            dragDrop: true,                 // 允许拖动上传
+            tailor: true,                   // 允许裁剪图片
+            del: true,                      // 允许删除文件
+            finishDel: false,               // 上传完成后不删除预览
+            /* 回调接口 */
+            onSelect: function (selectFiles, allFiles) {
+                console.info("已选择文件：");
+                console.info(selectFiles);
+            },
+            onDelete: function (file, files) {
+                console.info("已删除文件：" + file.name);
+            },
+            onSuccess: function (file, response) {
+                console.info("文件上传成功：" + file.name);
+                layer.msg(file.name + " 上传成功", {icon: 1});
+                // 实际应用中应刷新文件列表
+            },
+            onFailure: function (file, response) {
+                console.info("文件上传失败：" + file.name);
+                layer.msg(file.name + " 上传失败", {icon: 5});
+            },
+            onComplete: function (response) {
+                console.info("所有文件上传完成");
+                layer.msg("所有文件上传完成", {icon: 1});
+            }
+        });
+        
+        // 监听确认上传按钮
+        form.on('submit(confirmUpload)', function(data) {
+            var fileType = data.field.fileType;
+            if (!fileType) {
+                layer.msg('请选择文件类型', {icon: 5});
+                return false;
+            }
+            
+            // 触发上传
+            $(".zyupload-button").click();
+            
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

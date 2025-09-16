@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>毕业设计选题管理系统 - 课题分类颜色标识</title>
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <blockquote class="layui-elem-quote">
+            课题分类颜色标识设置<br>
+            用于设置不同类型课题的标识颜色，便于在选题列表中快速区分课题类型<br>
+            系统预设了常用课题类型，您可以为每种类型设置独特的标识颜色
+        </blockquote>
+
+        <form class="layui-form" action="" style="padding:20px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">软件开发类课题</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="software_color" value="#1aa094">
+                    <span class="layui-btn layui-btn-primary test-select-color" style="padding:0 12px;min-width:45px;background-color: #1aa094;"></span>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用于标识软件开发类课题</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">理论研究类课题</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="theory_color" value="#3398db">
+                    <span class="layui-btn layui-btn-primary test-select-color2" style="padding:0 12px;min-width:45px;background-color: #3398db;"></span>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用于标识理论研究类课题</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">实验分析类课题</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="experiment_color" value="#e6567a">
+                    <span class="layui-btn layui-btn-primary test-select-color3" style="padding:0 12px;min-width:45px;background-color: #e6567a;"></span>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用于标识实验分析类课题</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">设计类课题</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="design_color" value="#ffb800">
+                    <span class="layui-btn layui-btn-primary test-select-color4" style="padding:0 12px;min-width:45px;background-color: #ffb800;"></span>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用于标识设计类课题</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">调研报告类课题</label>
+                <div class="layui-input-inline">
+                    <input type="hidden" name="report_color" value="#2f4056">
+                    <span class="layui-btn layui-btn-primary test-select-color5" style="padding:0 12px;min-width:45px;background-color: #2f4056;"></span>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用于标识调研报告类课题</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="saveColorConfig">保存颜色配置</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+        <pre class="layui-code">
+    $(function () {
+        // 软件开发类课题颜色选择器
+        $('.test-select-color').paigusu({
+            color: '#1aa094',//初始色
+        }, function (event, obj) {
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="software_color"]').val('#' + obj.hex);
+        });
+        
+        // 理论研究类课题颜色选择器
+        $('.test-select-color2').paigusu({
+            color: '#3398db',//初始色
+        }, function (event, obj) {
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="theory_color"]').val('#' + obj.hex);
+        });
+        
+        // 更多类型的颜色选择器配置...
+        
+        // 表单提交处理
+        layui.use('form', function() {
+            var form = layui.form;
+            form.on('submit(saveColorConfig)', function(data) {
+                // 保存颜色配置到服务器
+                console.log('颜色配置数据:', data.field);
+                layer.msg('颜色配置保存成功', {icon: 1});
+                return false;
+            });
+        });
+    });
+        </pre>
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="../lib/jq-module/paigusu.min.js" charset="utf-8"></script>
+<script>
+    $(function () {
+        // 软件开发类课题颜色选择器
+        $('.test-select-color').paigusu({
+            color: '#1aa094',//初始色
+        }, function (event, obj) {
+            console.log(event);
+            console.log(obj);
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="software_color"]').val('#' + obj.hex);
+        });
+        
+        // 理论研究类课题颜色选择器
+        $('.test-select-color2').paigusu({
+            color: '#3398db',//初始色
+        }, function (event, obj) {
+            console.log(event);
+            console.log(obj);
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="theory_color"]').val('#' + obj.hex);
+        });
+        
+        // 实验分析类课题颜色选择器
+        $('.test-select-color3').paigusu({
+            color: '#e6567a',//初始色
+        }, function (event, obj) {
+            console.log(event);
+            console.log(obj);
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="experiment_color"]').val('#' + obj.hex);
+        });
+        
+        // 设计类课题颜色选择器
+        $('.test-select-color4').paigusu({
+            color: '#ffb800',//初始色
+        }, function (event, obj) {
+            console.log(event);
+            console.log(obj);
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="design_color"]').val('#' + obj.hex);
+        });
+        
+        // 调研报告类课题颜色选择器
+        $('.test-select-color5').paigusu({
+            color: '#2f4056',//初始色
+        }, function (event, obj) {
+            console.log(event);
+            console.log(obj);
+            $(event).css('background-color', '#' + obj.hex);
+            $('input[name="report_color"]').val('#' + obj.hex);
+        });
+        
+        // 表单提交
+        layui.use('form', function() {
+            var form = layui.form;
+            form.on('submit(saveColorConfig)', function(data) {
+                // 实际应用中，这里会发送数据到服务器保存
+                layer.alert(JSON.stringify(data.field), {
+                    title: '保存的颜色配置'
+                });
+                return false;
+            });
+        });
+    });
+</script>
+</body>
+</html>
+    

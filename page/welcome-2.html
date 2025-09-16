@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>毕业设计选题管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- 引入ECharts库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .top-panel {
+            border: 1px solid #eceff9;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .top-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+        }
+        .top-panel > .layui-card-body{
+            height: 60px;
+        }
+        .top-panel-number{
+            line-height:60px;
+            font-size: 30px;
+            border-right:1px solid #eceff9;
+            font-weight: 600;
+        }
+        .top-panel-tips{
+            line-height:30px;
+            font-size: 12px
+        }
+        .card-header-icon {
+            margin-right: 8px;
+            color: #1E9FFF;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-main">
+    <!-- 顶部数据指标面板 -->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">
+                    <i class="fa fa-book card-header-icon"></i>
+                    课题总数
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            1,286
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲12</a><br>
+                            比上周 <a style="color: #1aa094">▲86</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">
+                    <i class="fa fa-users card-header-icon"></i>
+                    参与学生
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            954
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲8</a><br>
+                            比上周 <a style="color: #1aa094">▲42</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">
+                    <i class="fa fa-check-square-o card-header-icon"></i>
+                    已选课题
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            872
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲15</a><br>
+                            比上周 <a style="color: #1aa094">▲68</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">
+                    <i class="fa fa-clock-o card-header-icon"></i>
+                    待审核课题
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            42
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #bd3004">▼5</a><br>
+                            比上周 <a style="color: #bd3004">▼18</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要图表区域 -->
+    <div class="layui-row layui-col-space15" style="margin-top: 15px;">
+        <div class="layui-col-xs12 layui-col-md9">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="fa fa-line-chart card-header-icon"></i>
+                    选题进度趋势
+                </div>
+                <div class="layui-card-body">
+                    <div id="echarts-records" style="width:100%;min-height:400px;padding: 10px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="fa fa-pie-chart card-header-icon"></i>
+                    课题类型分布
+                </div>
+                <div class="layui-card-body">
+                    <div id="echarts-pies" style="width:100%;min-height:400px;padding: 10px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 次要图表区域 -->
+    <div class="layui-row layui-col-space15" style="margin-top: 15px;">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="fa fa-bar-chart card-header-icon"></i>
+                    各学院选题情况
+                </div>
+                <div class="layui-card-body">
+                    <div id="echarts-dataset" style="width:100%;min-height:300px;padding: 10px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="fa fa-area-chart card-header-icon"></i>
+                    课题难度分布
+                </div>
+                <div class="layui-card-body">
+                    <div id="echarts-difficulty" style="width:100%;min-height:300px;padding: 10px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+
+        // 选题进度趋势图
+        var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+        var optionRecords = {
+            title: {
+                text: '近七周选题进度趋势'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['课题发布', '学生申请', '审核通过', '确认选题', '开始指导']
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周', '第7周']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '数量'
+                }
+            ],
+            series: [
+                {
+                    name: '课题发布',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [120, 232, 301, 334, 390, 430, 410]
+                },
+                {
+                    name: '学生申请',
+                    type: 'line',
+                    areaStyle: {},
+                    data: [80, 182, 291, 334, 390, 430, 450]
+                },
+                {
+                    name: '审核通过',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [60, 150, 250, 300, 350, 380, 400]
+                },
+                {
+                    name: '确认选题',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [50, 130, 220, 280, 320, 350, 370]
+                },
+                {
+                    name: '开始指导',
+                    type: 'line',
+                    stack: '总量',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    areaStyle: {},
+                    data: [30, 100, 180, 240, 290, 320, 350]
+                }
+            ]
+        };
+        echartsRecords.setOption(optionRecords);
+
+
+        // 课题类型分布图
+        var echartsPies = echarts.init(document.getElementById('echarts-pies'), 'walden');
+        var optionPies = {
+            title: {
+                text: '课题类型占比',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['理论研究', '应用开发', '设计类', '实验研究', '调研分析']
+            },
+            series: [
+                {
+                    name: '课题类型',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['50%', '60%'],
+                    roseType: 'radius',
+                    data: [
+                        {value: 280, name: '理论研究'},
+                        {value: 420, name: '应用开发'},
+                        {value: 210, name: '设计类'},
+                        {value: 180, name: '实验研究'},
+                        {value: 196, name: '调研分析'}
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        echartsPies.setOption(optionPies);
+
+
+        // 各学院选题情况柱状图
+        var echartsDataset = echarts.init(document.getElementById('echarts-dataset'), 'walden');
+        var optionDataset = {
+            legend: {
+                data: ['已选课题', '剩余课题']
+            },
+            tooltip: {},
+            dataset: {
+                dimensions: ['学院', '已选课题', '剩余课题'],
+                source: [
+                    {学院: '计算机学院', '已选课题': 185, '剩余课题': 45},
+                    {学院: '电子信息学院', '已选课题': 156, '剩余课题': 32},
+                    {学院: '自动化学院', '已选课题': 132, '剩余课题': 28},
+                    {学院: '机械工程学院', '已选课题': 125, '剩余课题': 35},
+                    {学院: '材料学院', '已选课题': 98, '剩余课题': 22},
+                    {学院: '管理学院', '已选课题': 176, '剩余课题': 42}
+                ]
+            },
+            xAxis: {type: 'category'},
+            yAxis: {name: '课题数量'},
+            series: [
+                {type: 'bar', name: '已选课题'},
+                {type: 'bar', name: '剩余课题'}
+            ]
+        };
+        echartsDataset.setOption(optionDataset);
+
+
+        // 课题难度分布图表
+        var echartsDifficulty = echarts.init(document.getElementById('echarts-difficulty'), 'walden');
+        var optionDifficulty = {
+            title: {
+                text: '课题难度与学生选择分布'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['课题数量', '平均选择人数']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['简单', '较简单', '中等', '较难', '困难']
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '课题数量',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '选择人数',
+                    nameLocation: 'right',
+                    axisLabel: {
+                        formatter: '{value} 人'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '课题数量',
+                    type: 'bar',
+                    data: [180, 320, 450, 220, 116],
+                    itemStyle: {
+                        color: '#1E9FFF'
+                    }
+                },
+                {
+                    name: '平均选择人数',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: [8.5, 6.2, 4.8, 3.2, 1.5],
+                    itemStyle: {
+                        color: '#FF5722'
+                    },
+                    lineStyle: {
+                        color: '#FF5722'
+                    }
+                }
+            ]
+        };
+        echartsDifficulty.setOption(optionDifficulty);
+
+
+        // 窗口缩放时重绘图表
+        window.onresize = function () {
+            echartsRecords.resize();
+            echartsPies.resize();
+            echartsDataset.resize();
+            echartsDifficulty.resize();
+        }
+
+    });
+</script>
+</body>
+</html>

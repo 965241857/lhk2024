@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>课题列表 - 毕业设计课题审核管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-card {margin-bottom: 15px;}
+        .layui-form-item {margin-bottom: 15px;}
+        .operation-btn {margin-right: 5px;}
+        .add-btn-container {text-align: right; margin-bottom: 10px;}
+        .reset-data-btn {margin-left: 10px; background-color: #FF5722;}
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!-- 页面标题区域 -->
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="fa fa-list icon"></i>课题审核列表
+                <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="window.location.href='../index.html'">
+                    <i class="fa fa-arrow-left"></i> 返回首页
+                </button>
+                <button class="layui-btn layui-btn-sm reset-data-btn" onclick="forceInitData()">
+                    <i class="fa fa-refresh"></i> 重新加载20条审核数据
+                </button>
+            </div>
+        </div>
+        
+        <!-- 搜索和添加区域 -->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="add-btn-container">
+                    <button class="layui-btn" onclick="openAddModal()">
+                        <i class="fa fa-plus"></i> 新增待审核课题
+                    </button>
+                </div>
+                
+                <form class="layui-form" lay-filter="searchForm" id="searchForm">
+                    <div class="layui-form-item">
+                        <div class="layui-col-md3">
+                            <input type="text" name="topicName" placeholder="模糊搜索课题名（如：图像）" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-col-md3">
+                            <select name="teacher">
+                                <option value="">所有指导教师</option>
+                                <option value="1">张教授</option>
+                                <option value="2">李副教授</option>
+                                <option value="3">王老师</option>
+                                <option value="4">赵讲师</option>
+                                <option value="5">刘教授</option>
+                            </select>
+                        </div>
+                        <div class="layui-col-md3">
+                            <select name="status">
+                                <option value="">所有审核状态</option>
+                                <option value="1">待审核</option>
+                                <option value="2">审核通过</option>
+                                <option value="3">审核驳回</option>
+                                <option value="4">已公示</option>
+                                <option value="5">已结项</option>
+                            </select>
+                        </div>
+                        <div class="layui-col-md3">
+                            <button class="layui-btn" lay-submit lay-filter="searchBtn"><i class="fa fa-search"></i> 搜索</button>
+                            <button type="reset" class="layui-btn layui-btn-primary" id="resetBtn"><i class="fa fa-refresh"></i> 重置搜索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 课题列表 -->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table class="layui-table" lay-size="sm">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>课题名称</th>
+                            <th>指导教师</th>
+                            <th>课题类型</th>
+                            <th>学生人数</th>
+                            <th>审核状态</th>
+                            <th>提交时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topicTableBody">
+                        <!-- 数据将动态生成 -->
+                    </tbody>
+                </table>
+                
+                <div id="pagination" style="text-align: right;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加/编辑弹窗 -->
+<div id="topicModal" style="display: none;">
+    <form class="layui-form" lay-filter="topicForm" id="topicForm">
+        <input type="hidden" name="id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">课题名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="topicName" required lay-verify="required" placeholder="请输入课题名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">指导教师</label>
+            <div class="layui-input-block">
+                <select name="teacherId" required lay-verify="required">
+                    <option value="">请选择教师</option>
+                    <option value="1">张教授</option>
+                    <option value="2">李副教授</option>
+                    <option value="3">王老师</option>
+                    <option value="4">赵讲师</option>
+                    <option value="5">刘教授</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">课题类型</label>
+            <div class="layui-input-block">
+                <select name="type" required lay-verify="required">
+                    <option value="1">研究型</option>
+                    <option value="2">应用型</option>
+                    <option value="3">设计型</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">学生人数</label>
+            <div class="layui-input-block">
+                <input type="number" name="studentNum" required lay-verify="required|number" min="1" max="10" placeholder="1-10人" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核状态</label>
+            <div class="layui-input-block">
+                <select name="status" required lay-verify="required">
+                    <option value="1">待审核</option>
+                    <option value="2">审核通过</option>
+                    <option value="3">审核驳回</option>
+                    <option value="4">已公示</option>
+                    <option value="5">已结项</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核意见</label>
+            <div class="layui-input-block">
+                <textarea name="description" placeholder="请输入审核意见或课题描述" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="saveTopic">保存</button>
+                <button type="button" class="layui-btn layui-btn-primary" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 详情弹窗 -->
+<div id="detailModal" style="display: none;">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">课题名称</label>
+            <div class="layui-input-block" id="detailTopicName"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">指导教师</label>
+            <div class="layui-input-block" id="detailTeacher"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">课题类型</label>
+            <div class="layui-input-block" id="detailType"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">学生人数</label>
+            <div class="layui-input-block" id="detailStudentNum"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核状态</label>
+            <div class="layui-input-block" id="detailStatus"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">提交时间</label>
+            <div class="layui-input-block" id="detailCreateTime"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核意见</label>
+            <div class="layui-input-block" id="detailDescription" style="white-space: pre-wrap; line-height: 1.5;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laypage', 'layer'], function() {
+        var form = layui.form;
+        var laypage = layui.laypage;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        
+        // 全局变量
+        var currentPage = 1;
+        var pageSize = 10;
+        var totalCount = 0;
+        var searchParams = {};
+        var modalIndex = null;
+        
+        // 初始化页面（强制加载20条数据）
+        init();
+        
+        function init() {
+            // 强制初始化20条数据（无视缓存）
+            forceInitData();
+            // 加载列表
+            loadTopicList();
+            // 绑定事件
+            bindEvents();
+        }
+        
+        // 核心：20条完整模拟数据（强制写入，覆盖旧数据）
+        function getFullMockData() {
+            return [
+                // 张教授（ID:1）的课题
+                {
+                    id: 1,
+                    topicName: '基于深度学习的图像识别算法研究',
+                    teacherId: 1,
+                    teacherName: '张教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 2,
+                    statusName: '审核通过',
+                    createTime: '2025-09-01',
+                    description: '审核意见：选题具有研究价值，符合专业培养目标，同意立项。建议补充具体研究方案和技术路线。'
+                },
+                {
+                    id: 2,
+                    topicName: '智能校园导航系统设计',
+                    teacherId: 1,
+                    teacherName: '张教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 3,
+                    status: 4,
+                    statusName: '已公示',
+                    createTime: '2025-08-28',
+                    description: '审核意见：选题实用性强，技术方案可行，团队配置合理，同意立项并公示。'
+                },
+                {
+                    id: 3,
+                    topicName: '零件缺陷机器视觉检测',
+                    teacherId: 1,
+                    teacherName: '张教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 1,
+                    statusName: '待审核',
+                    createTime: '2025-09-05',
+                    description: '待审核：请审核该课题的研究可行性和创新性'
+                },
+                {
+                    id: 4,
+                    topicName: '校园安防异常行为识别',
+                    teacherId: 1,
+                    teacherName: '张教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 4,
+                    status: 3,
+                    statusName: '审核驳回',
+                    createTime: '2025-09-03',
+                    description: '审核意见：驳回理由：课题难度超出本科生能力范围，建议简化研究目标，缩小研究范围。'
+                },
+                {
+                    id: 5,
+                    topicName: '基于视觉的课堂考勤系统',
+                    teacherId: 1,
+                    teacherName: '张教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 2,
+                    status: 5,
+                    statusName: '已结项',
+                    createTime: '2025-08-30',
+                    description: '最终审核意见：项目完成质量高，达到预期目标，通过结项审核。'
+                },
+
+                // 李副教授（ID:2）的课题
+                {
+                    id: 6,
+                    topicName: 'B2C电商平台设计与实现',
+                    teacherId: 2,
+                    teacherName: '李副教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 3,
+                    status: 2,
+                    statusName: '审核通过',
+                    createTime: '2025-08-25',
+                    description: '审核意见：选题实用，技术路线清晰，同意立项。建议增加数据分析模块。'
+                },
+                {
+                    id: 7,
+                    topicName: '社交媒体情感分析系统',
+                    teacherId: 2,
+                    teacherName: '李副教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 1,
+                    statusName: '待审核',
+                    createTime: '2025-09-02',
+                    description: '待审核：请评估该课题的研究价值和可行性'
+                },
+                {
+                    id: 8,
+                    topicName: '在线教育直播平台开发',
+                    teacherId: 2,
+                    teacherName: '李副教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 4,
+                    status: 3,
+                    statusName: '审核驳回',
+                    createTime: '2025-08-30',
+                    description: '审核意见：驳回理由：项目规模过大，技术实现难度高，建议简化功能模块。'
+                },
+                {
+                    id: 9,
+                    topicName: '用户画像与精准推荐研究',
+                    teacherId: 2,
+                    teacherName: '李副教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 5,
+                    statusName: '已结项',
+                    createTime: '2025-07-15',
+                    description: '最终审核意见：研究成果达到预期，论文质量良好，通过结项审核。'
+                },
+                {
+                    id: 10,
+                    topicName: '电商用户行为分析平台',
+                    teacherId: 2,
+                    teacherName: '李副教授',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 3,
+                    status: 4,
+                    statusName: '已公示',
+                    createTime: '2025-09-04',
+                    description: '审核意见：选题有实际应用价值，技术方案合理，同意立项并公示。'
+                },
+
+                // 王老师（ID:3）的课题
+                {
+                    id: 11,
+                    topicName: '图书馆书籍智能分类系统',
+                    teacherId: 3,
+                    teacherName: '王老师',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 3,
+                    status: 2,
+                    statusName: '审核通过',
+                    createTime: '2025-09-04',
+                    description: '审核意见：项目实用性强，技术方案可行，同意立项。'
+                },
+                {
+                    id: 12,
+                    topicName: '基于大数据的学生成绩分析',
+                    teacherId: 3,
+                    teacherName: '王老师',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 1,
+                    statusName: '待审核',
+                    createTime: '2025-09-01',
+                    description: '待审核：请评估数据获取的可行性和研究方法的科学性'
+                },
+                {
+                    id: 13,
+                    topicName: '校园二手交易平台设计',
+                    teacherId: 3,
+                    teacherName: '王老师',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 3,
+                    status: 4,
+                    statusName: '已公示',
+                    createTime: '2025-08-27',
+                    description: '审核意见：项目具有实际应用价值，团队配置合理，同意立项并公示。'
+                },
+                {
+                    id: 14,
+                    topicName: '教育数据可视化平台开发',
+                    teacherId: 3,
+                    teacherName: '王老师',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 2,
+                    status: 3,
+                    statusName: '审核驳回',
+                    createTime: '2025-08-29',
+                    description: '审核意见：驳回理由：与现有系统功能重复，建议调整研究方向，突出创新点。'
+                },
+                {
+                    id: 15,
+                    topicName: '校园活动推荐系统',
+                    teacherId: 3,
+                    teacherName: '王老师',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 2,
+                    status: 2,
+                    statusName: '审核通过',
+                    createTime: '2025-09-05',
+                    description: '审核意见：选题新颖，技术方案合理，同意立项。'
+                },
+
+                // 赵讲师（ID:4）的课题
+                {
+                    id: 16,
+                    topicName: '移动办公APP设计与实现',
+                    teacherId: 4,
+                    teacherName: '赵讲师',
+                    type: 3,
+                    typeName: '设计型',
+                    studentNum: 3,
+                    status: 1,
+                    statusName: '待审核',
+                    createTime: '2025-08-26',
+                    description: '待审核：请评估设计方案的完整性和可行性'
+                },
+                {
+                    id: 17,
+                    topicName: '校园失物招领平台开发',
+                    teacherId: 4,
+                    teacherName: '赵讲师',
+                    type: 2,
+                    typeName: '应用型',
+                    studentNum: 2,
+                    status: 4,
+                    statusName: '已公示',
+                    createTime: '2025-09-02',
+                    description: '审核意见：项目实用性强，技术方案成熟，同意立项并公示。'
+                },
+
+                // 刘教授（ID:5）的课题
+                {
+                    id: 18,
+                    topicName: '新能源汽车电池管理系统研究',
+                    teacherId: 5,
+                    teacherName: '刘教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 2,
+                    statusName: '审核通过',
+                    createTime: '2025-08-24',
+                    description: '审核意见：选题具有较高研究价值，理论基础扎实，同意立项。'
+                },
+                {
+                    id: 19,
+                    topicName: '智能家居控制系统设计',
+                    teacherId: 5,
+                    teacherName: '刘教授',
+                    type: 3,
+                    typeName: '设计型',
+                    studentNum: 3,
+                    status: 3,
+                    statusName: '审核驳回',
+                    createTime: '2025-09-01',
+                    description: '审核意见：驳回理由：硬件需求较高，实验室条件有限，建议改为仿真设计。'
+                },
+                {
+                    id: 20,
+                    topicName: '基于区块链的学历认证系统',
+                    teacherId: 5,
+                    teacherName: '刘教授',
+                    type: 1,
+                    typeName: '研究型',
+                    studentNum: 2,
+                    status: 5,
+                    statusName: '已结项',
+                    createTime: '2025-07-20',
+                    description: '最终审核意见：研究具有创新性，技术实现完整，通过结项审核。'
+                }
+            ];
+        }
+        
+        // 强制初始化数据（覆盖任何旧数据）
+        function forceInitData() {
+            const fullData = getFullMockData();
+            localStorage.setItem('topics', JSON.stringify(fullData));
+        }
+        
+        // 获取所有课题数据
+        function getAllTopics() {
+            return JSON.parse(localStorage.getItem('topics') || '[]');
+        }
+        
+        // 保存课题数据
+        function saveTopics(topics) {
+            localStorage.setItem('topics', JSON.stringify(topics));
+        }
+        
+        // 加载课题列表
+        function loadTopicList() {
+            let allTopics = getAllTopics();
+            
+            // 搜索过滤逻辑
+            let filteredTopics = allTopics.filter(topic => {
+                // 课题名称模糊搜索（忽略大小写）
+                if (searchParams.topicName) {
+                    const searchStr = searchParams.topicName.toLowerCase();
+                    if (!topic.topicName.toLowerCase().includes(searchStr)) {
+                        return false;
+                    }
+                }
+                // 教师筛选
+                if (searchParams.teacher && topic.teacherId != searchParams.teacher) {
+                    return false;
+                }
+                // 状态筛选
+                if (searchParams.status && topic.status != searchParams.status) {
+                    return false;
+                }
+                return true;
+            });
+            
+            // 分页处理
+            totalCount = filteredTopics.length;
+            let startIndex = (currentPage - 1) * pageSize;
+            let currentTopics = filteredTopics.slice(startIndex, startIndex + pageSize);
+            
+            // 渲染表格
+            renderTable(currentTopics);
+            // 渲染分页
+            renderPagination();
+        }
+        
+        // 渲染表格
+        function renderTable(topics) {
+            const tableBody = $('#topicTableBody');
+            tableBody.empty();
+            
+            if (topics.length === 0) {
+                tableBody.html('<tr><td colspan="8" style="text-align: center;">暂无数据</td></tr>');
+                return;
+            }
+            
+            topics.forEach((topic, index) => {
+                // 审核状态样式映射
+                const statusStyles = {
+                    1: 'layui-bg-orange',   // 待审核
+                    2: 'layui-bg-green',    // 审核通过
+                    3: 'layui-bg-red',      // 审核驳回
+                    4: 'layui-bg-blue',     // 已公示
+                    5: 'layui-bg-gray'      // 已结项
+                };
+                
+                const tr = `
+                    <tr>
+                        <td>${(currentPage - 1) * pageSize + index + 1}</td>
+                        <td>${topic.topicName}</td>
+                        <td>${topic.teacherName}</td>
+                        <td>${topic.typeName}</td>
+                        <td>${topic.studentNum}</td>
+                        <td><span class="layui-badge ${statusStyles[topic.status]}">${topic.statusName}</span></td>
+                        <td>${topic.createTime}</td>
+                        <td>
+                            <button class="layui-btn layui-btn-xs operation-btn" onclick="viewTopic(${topic.id})">查看</button>
+                            <button class="layui-btn layui-btn-normal layui-btn-xs operation-btn" onclick="editTopic(${topic.id})">编辑</button>
+                            <button class="layui-btn layui-btn-danger layui-btn-xs operation-btn" onclick="deleteTopic(${topic.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(tr);
+            });
+        }
+        
+        // 渲染分页
+        function renderPagination() {
+            laypage.render({
+                elem: 'pagination',
+                count: totalCount,
+                limit: pageSize,
+                limits: [5, 10, 15, 20],
+                curr: currentPage,
+                layout: ['prev', 'page', 'next', 'count', 'limit', 'skip'],
+                jump: function(obj, first) {
+                    if (!first) {
+                        currentPage = obj.curr;
+                        pageSize = obj.limit;
+                        loadTopicList();
+                    }
+                }
+            });
+        }
+        
+        // 绑定事件
+        function bindEvents() {
+            // 搜索事件
+            form.on('submit(searchBtn)', function(data) {
+                searchParams = {};
+                if (data.field.topicName && data.field.topicName.trim() !== '') {
+                    searchParams.topicName = data.field.topicName.trim();
+                }
+                if (data.field.teacher) {
+                    searchParams.teacher = data.field.teacher;
+                }
+                if (data.field.status) {
+                    searchParams.status = data.field.status;
+                }
+                currentPage = 1;
+                loadTopicList();
+                return false;
+            });
+            
+            // 重置搜索
+            $('#resetBtn').click(function() {
+                $('#searchForm')[0].reset();
+                searchParams = {};
+                currentPage = 1;
+                loadTopicList();
+            });
+        }
+        
+        // 打开添加弹窗
+        window.openAddModal = function() {
+            form.val('topicForm', {
+                id: '',
+                topicName: '',
+                teacherId: '',
+                type: '1',
+                studentNum: '',
+                status: '1',  // 默认待审核
+                description: ''
+            });
+            
+            modalIndex = layer.open({
+                title: '新增待审核课题',
+                type: 1,
+                area: '600px',
+                content: $('#topicModal').html()
+            });
+            
+            form.render();
+            form.on('submit(saveTopic)', function(data) {
+                saveTopicData(data.field);
+                return false;
+            });
+        }
+        
+        // 编辑课题
+        window.editTopic = function(id) {
+            const topics = getAllTopics();
+            const topic = topics.find(t => t.id == id);
+            if (!topic) return;
+            
+            form.val('topicForm', {
+                id: topic.id,
+                topicName: topic.topicName,
+                teacherId: topic.teacherId,
+                type: topic.type,
+                studentNum: topic.studentNum,
+                status: topic.status,
+                description: topic.description
+            });
+            
+            modalIndex = layer.open({
+                title: '编辑课题审核信息',
+                type: 1,
+                area: '600px',
+                content: $('#topicModal').html()
+            });
+            
+            form.render();
+            form.on('submit(saveTopic)', function(data) {
+                saveTopicData(data.field);
+                return false;
+            });
+        }
+        
+        // 查看课题
+        window.viewTopic = function(id) {
+            const topics = getAllTopics();
+            const topic = topics.find(t => t.id == id);
+            if (!topic) return;
+            
+            $('#detailTopicName').text(topic.topicName);
+            $('#detailTeacher').text(topic.teacherName);
+            $('#detailType').text(topic.typeName);
+            $('#detailStudentNum').text(topic.studentNum);
+            
+            // 审核状态样式映射
+            const statusStyles = {
+                1: 'layui-bg-orange',   // 待审核
+                2: 'layui-bg-green',    // 审核通过
+                3: 'layui-bg-red',      // 审核驳回
+                4: 'layui-bg-blue',     // 已公示
+                5: 'layui-bg-gray'      // 已结项
+            };
+            $('#detailStatus').html(`<span class="layui-badge ${statusStyles[topic.status]}">${topic.statusName}</span>`);
+            
+            $('#detailCreateTime').text(topic.createTime);
+            $('#detailDescription').text(topic.description);
+            
+            modalIndex = layer.open({
+                title: '课题审核详情',
+                type: 1,
+                area: '600px',
+                content: $('#detailModal').html()
+            });
+        }
+        
+        // 保存课题数据
+        function saveTopicData(formData) {
+            const topics = getAllTopics();
+            const teacherMap = {
+                '1': '张教授', '2': '李副教授', '3': '王老师', '4': '赵讲师', '5': '刘教授'
+            };
+            const typeMap = {
+                '1': { id: 1, name: '研究型' },
+                '2': { id: 2, name: '应用型' },
+                '3': { id: 3, name: '设计型' }
+            };
+            // 审核状态映射
+            const statusMap = {
+                '1': { id: 1, name: '待审核' },
+                '2': { id: 2, name: '审核通过' },
+                '3': { id: 3, name: '审核驳回' },
+                '4': { id: 4, name: '已公示' },
+                '5': { id: 5, name: '已结项' }
+            };
+            
+            // 格式化日期
+            const formatDate = () => {
+                const date = new Date();
+                return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+            };
+            
+            if (formData.id) {
+                // 编辑
+                const index = topics.findIndex(t => t.id == formData.id);
+                if (index !== -1) {
+                    topics[index] = {
+                        ...topics[index],
+                        topicName: formData.topicName,
+                        teacherId: parseInt(formData.teacherId),
+                        teacherName: teacherMap[formData.teacherId],
+                        type: typeMap[formData.type].id,
+                        typeName: typeMap[formData.type].name,
+                        studentNum: parseInt(formData.studentNum),
+                        status: statusMap[formData.status].id,
+                        statusName: statusMap[formData.status].name,
+                        description: formData.description
+                    };
+                }
+            } else {
+                // 新增
+                const newId = topics.length > 0 ? Math.max(...topics.map(t => t.id)) + 1 : 1;
+                topics.push({
+                    id: newId,
+                    topicName: formData.topicName,
+                    teacherId: parseInt(formData.teacherId),
+                    teacherName: teacherMap[formData.teacherId],
+                    type: typeMap[formData.type].id,
+                    typeName: typeMap[formData.type].name,
+                    studentNum: parseInt(formData.studentNum),
+                    status: statusMap[formData.status].id,
+                    statusName: statusMap[formData.status].name,
+                    createTime: formatDate(),
+                    description: formData.description
+                });
+            }
+            
+            saveTopics(topics);
+            layer.close(modalIndex);
+            loadTopicList();
+            layer.msg(formData.id ? '审核信息修改成功' : '新增待审核课题成功', { icon: 1 });
+        }
+        
+        // 删除课题
+        window.deleteTopic = function(id) {
+            layer.confirm('确定要删除这条审核记录吗？', {
+                icon: 3,
+                title: '提示'
+            }, function(index) {
+                let topics = getAllTopics();
+                topics = topics.filter(topic => topic.id != id);
+                saveTopics(topics);
+                
+                layer.close(index);
+                loadTopicList();
+                layer.msg('审核记录删除成功', { icon: 1 });
+            });
+        }
+        
+        // 关闭弹窗
+        window.closeModal = function() {
+            layer.close(modalIndex);
+        }
+    });
+</script>
+</body>
+</html>
+    
