@@ -1,0 +1,187 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 20,
+  "data": [
+    {
+      "menuId": 1,
+      "menuName": "系统管理",
+      "permission": null,
+      "menuUrl": null,
+      "sortOrder": 1,
+      "menuType": "directory",
+      "parentId": -1
+    },
+    {
+      "menuId": 2,
+      "menuName": "用户管理",
+      "permission": "system:user:manage",
+      "menuUrl": "system/user",
+      "sortOrder": 1,
+      "menuType": "menu",
+      "parentId": 1
+    },
+    {
+      "menuId": 3,
+      "menuName": "查询用户",
+      "permission": "system:user:view",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 2
+    },
+    {
+      "menuId": 4,
+      "menuName": "添加用户",
+      "permission": "system:user:add",
+      "menuUrl": "",
+      "sortOrder": 2,
+      "menuType": "button",
+      "parentId": 2
+    },
+    {
+      "menuId": 5,
+      "menuName": "角色管理",
+      "permission": "system:role:manage",
+      "menuUrl": "system/role",
+      "sortOrder": 2,
+      "menuType": "menu",
+      "parentId": 1
+    },
+    {
+      "menuId": 6,
+      "menuName": "角色授权",
+      "permission": "system:role:auth",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 5
+    },
+    {
+      "menuId": 7,
+      "menuName": "选题管理",
+      "permission": null,
+      "menuUrl": null,
+      "sortOrder": 2,
+      "menuType": "directory",
+      "parentId": -1
+    },
+    {
+      "menuId": 8,
+      "menuName": "题目管理",
+      "permission": "topic:manage",
+      "menuUrl": "topic/manage",
+      "sortOrder": 1,
+      "menuType": "menu",
+      "parentId": 7
+    },
+    {
+      "menuId": 9,
+      "menuName": "查询题目",
+      "permission": "topic:view",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 8
+    },
+    {
+      "menuId": 10,
+      "menuName": "新增题目",
+      "permission": "topic:add",
+      "menuUrl": "",
+      "sortOrder": 2,
+      "menuType": "button",
+      "parentId": 8
+    },
+    {
+      "menuId": 11,
+      "menuName": "审核题目",
+      "permission": "topic:audit",
+      "menuUrl": "",
+      "sortOrder": 3,
+      "menuType": "button",
+      "parentId": 8
+    },
+    {
+      "menuId": 12,
+      "menuName": "选题申请",
+      "permission": "topic:apply:manage",
+      "menuUrl": "topic/apply",
+      "sortOrder": 2,
+      "menuType": "menu",
+      "parentId": 7
+    },
+    {
+      "menuId": 13,
+      "menuName": "审批申请",
+      "permission": "topic:apply:approve",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 12
+    },
+    {
+      "menuId": 14,
+      "menuName": "学生管理",
+      "permission": null,
+      "menuUrl": null,
+      "sortOrder": 3,
+      "menuType": "directory",
+      "parentId": -1
+    },
+    {
+      "menuId": 15,
+      "menuName": "学生信息",
+      "permission": "student:info:manage",
+      "menuUrl": "student/info",
+      "sortOrder": 1,
+      "menuType": "menu",
+      "parentId": 14
+    },
+    {
+      "menuId": 16,
+      "menuName": "查询学生",
+      "permission": "student:info:view",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 15
+    },
+    {
+      "menuId": 17,
+      "menuName": "导入学生",
+      "permission": "student:info:import",
+      "menuUrl": "",
+      "sortOrder": 2,
+      "menuType": "button",
+      "parentId": 15
+    },
+    {
+      "menuId": 18,
+      "menuName": "教师管理",
+      "permission": null,
+      "menuUrl": null,
+      "sortOrder": 4,
+      "menuType": "directory",
+      "parentId": -1
+    },
+    {
+      "menuId": 19,
+      "menuName": "教师信息",
+      "permission": "teacher:info:manage",
+      "menuUrl": "teacher/info",
+      "sortOrder": 1,
+      "menuType": "menu",
+      "parentId": 18
+    },
+    {
+      "menuId": 20,
+      "menuName": "查询教师",
+      "permission": "teacher:info:view",
+      "menuUrl": "",
+      "sortOrder": 1,
+      "menuType": "button",
+      "parentId": 19
+    }
+  ]
+}
